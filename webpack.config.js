@@ -26,7 +26,6 @@ const config  = {
 module.exports = (env, argv) => { 
   // Adjust config based on passed mode
   if( argv.mode === 'development') { 
-    console.log("DEV MODE!!!!");
     config.devtool = 'source-map';
   }
   return config;
