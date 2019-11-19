@@ -4,11 +4,11 @@
   "description": "Okta JS-based consumption layer for IDX API",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -r dist/",
+    "clean": "rimraf dist",
     "build": "yarn build:prod",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
-    "test:lint": "eslint src",
+    "lint": "eslint src",
     "test": "yarn test:lint"
   },
   "repository": "https://github.com/okta/okta-idx-js.git",
@@ -28,6 +28,7 @@
     "core-js": "3",
     "eslint": "^6.6.0",
     "jest": "^24.9.0",
+    "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   }

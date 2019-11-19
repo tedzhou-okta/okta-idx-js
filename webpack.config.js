@@ -2,6 +2,7 @@ const path = require('path');
 
 const config  = {
   entry: './src/index.js',
+  devtoo: 'source-map', 
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
@@ -9,7 +10,7 @@ const config  = {
   module: { 
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.js$/,
         exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
@@ -23,11 +24,5 @@ const config  = {
   },
 };
 
-module.exports = (env, argv) => { 
-  // Adjust config based on passed mode
-  if( argv.mode === 'development') { 
-    config.devtool = 'source-map';
-  }
-  return config;
-};
+module.exports = config;
 

@@ -1,4 +1,4 @@
-{
+const config = {
   "rules": {
     "curly": "error",
     "eqeqeq": "error",
@@ -37,4 +37,6 @@
   },
   "parser": "babel-eslint",
   "extends": "eslint:recommended"
-}
+};
+
+module.exports = config;

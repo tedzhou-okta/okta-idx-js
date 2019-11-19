@@ -11,7 +11,7 @@ const makeIdxState = function({ stateHandle }) {
 const start = async function start({ stateHandle }) {
   // TODO: Fill in any bootstrapping here
   const idxState = makeIdxState({ stateHandle });
-  return Promise.resolve(idxState);
+  return idxState;
 };
 
 
