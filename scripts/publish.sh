@@ -1,10 +1,11 @@
 #!/bin/bash -xe
 
+# NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
+
 source ${OKTA_HOME}/${REPO}/scripts/setup.sh
 
 REGISTRY="https://artifacts.aue1d.saasure.com/artifactory/api/npm/npm-okta"
 
-npm install -g @okta/ci-update-package
 npm install -g @okta/ci-pkginfo
 
 export TEST_SUITE_TYPE="build"
@@ -15,11 +16,6 @@ if [ -n "${action_branch}" ]; then
 else
   echo "Publishing from bacon testSuite using branch ${BRANCH}"
   TARGET_BRANCH=${BRANCH}
-fi
-
-if ! ci-update-package --branch ${TARGET_BRANCH}; then
-  echo "ci-update-package failed! Exiting..."
-  exit $FAILED_SETUP
 fi
 
 if ! npm publish --registry ${REGISTRY}; then
