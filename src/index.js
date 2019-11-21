@@ -14,7 +14,6 @@ const start = async function start({ stateHandle }) {
   return idxState;
 };
 
-
 export default {
-  start
+  start,
 };
