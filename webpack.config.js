@@ -2,10 +2,12 @@ const path = require('path');
 
 const config  = {
   entry: './src/index.js',
-  devtoo: 'source-map', 
+  devtool: 'source-map', 
   output: {
-    filename: 'index.js',
+    filename: 'idx.js',
     path: path.resolve(__dirname, 'dist'),
+    library: 'idx',
+    libraryTarget: 'umd',
   },
   module: { 
     rules: [
@@ -16,7 +18,8 @@ const config  = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-proposal-optional-chaining']
+            // plugins: ['@babel/plugin-proposal-optional-chaining', '@babel/plugin-transform-runtime']
+            // plugins: ['@babel/plugin-proposal-optional-chaining', '@babel/plugin-transform-runtime']
           }
         }
       }

@@ -11,6 +11,7 @@ const presets = [
       },
       useBuiltIns: "usage",
       corejs: "3",
+      // plugins: ['@babel/plugin-proposal-optional-chaining', '@babel/plugin-transform-runtime']
     },
   ],
 ];

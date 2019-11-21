@@ -9,7 +9,8 @@
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production",
     "lint": "eslint src",
-    "test": "yarn test:lint"
+    "test:unit": "jest test/unit",
+    "test": "yarn test:unit"
   },
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
@@ -21,13 +22,15 @@
   "devDependencies": {
     "@babel/cli": "^7.7.0",
     "@babel/core": "^7.7.2",
-    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
     "@babel/preset-env": "^7.7.1",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
     "core-js": "3",
     "eslint": "^6.6.0",
     "jest": "^24.9.0",
+    "regenerator-runtime": "^0.13.3",
     "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
