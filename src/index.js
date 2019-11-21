@@ -14,9 +14,6 @@ const start = async function start({ stateHandle }) {
   return idxState;
 };
 
-export const foo = "testing";
-
 export default {
   start,
-  test: 1
 };
