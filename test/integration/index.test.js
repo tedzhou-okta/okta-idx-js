@@ -7,7 +7,7 @@ dotenv.config();
 // Thus, rather than testing a front end UI, these are integration tests
 // where no network interactions are mocked
 
-import idxBootstrap from '../idxBootstrap';
+import idxBootstrap from './idxBootstrap';
 
 const config = {};
 
