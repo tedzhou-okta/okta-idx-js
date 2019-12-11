@@ -17,7 +17,7 @@ const presets = [
 
 module.exports = {
   presets,
-  plugins: ['@babel/plugin-proposal-optional-chaining'],
+  plugins: ['@babel/plugin-proposal-optional-chaining', ['@babel/transform-runtime', { corejs: 3}]],
 };
 
 
