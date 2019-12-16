@@ -21,7 +21,7 @@ describe('idx-js', () => {
     const idxState = await idx.start({ domain, stateHandle });
     expect(idxState).toBeDefined();
     expect(idxState.proceed).toBeDefined();
-    expect(idxState._rawIdxState).toMatchObject(mockRequestIdentity);
+    expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
   });
 
   it('populates neededToProceed', async () => { 
