@@ -13,9 +13,6 @@ const makeIdxState = function({ stateHandle, idxResponse }) {
   };
 
   const fieldFilter = function( field ) { 
-    if(field.name === 'stateHandle') { 
-      return false;
-    }
     if(!field.visible && field.value) { 
       return false;
     }
@@ -29,7 +26,7 @@ const makeIdxState = function({ stateHandle, idxResponse }) {
   return {
     proceed,
     neededToProceed,
-    _rawIdxState: idxResponse, 
+    rawIdxState: idxResponse, 
   };
 };
 
