@@ -11,9 +11,22 @@ const makeIdxState = function({ stateHandle, idxResponse }) {
 
   const proceed = async function() {
   };
+
+  const fieldFilter = function( field ) { 
+    if(!field.visible && field.value) { 
+      return false;
+    }
+    return true;
+  };
+
+  const neededToProceed = Object.fromEntries( idxResponse.remediation.value.map( remediation => { 
+    return [ remediation.name, remediation.value.filter( fieldFilter ) ];
+  }) );
+
   return {
     proceed,
-    _rawIdxState: idxResponse, 
+    neededToProceed,
+    rawIdxState: idxResponse, 
   };
 };
 

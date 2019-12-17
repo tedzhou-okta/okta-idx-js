@@ -21,6 +21,16 @@ describe('idx-js', () => {
     const idxState = await idx.start({ domain, stateHandle });
     expect(idxState).toBeDefined();
     expect(idxState.proceed).toBeDefined();
+    expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
   });
+
+  it('populates neededToProceed', async () => { 
+    const idxState = await idx.start({ domain, stateHandle });
+    expect(idxState.neededToProceed).toMatchObject({
+      identify: [ { name: 'identifier', label: 'Username' } ],
+      'select-enroll-profile': [],
+    });
+  });
+
 });
 
