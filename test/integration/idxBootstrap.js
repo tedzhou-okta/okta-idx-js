@@ -1,7 +1,7 @@
 const fetch = require('cross-fetch');
 
 export default {
-  getStateHandle: function({ issuerUrl, clientId, redirectUri }) { 
+  getStateHandle: function({ issuerUrl, clientId, redirectUri }) {
 
     // Screen scrape until bootstrap API is public
     const params = [
@@ -19,10 +19,10 @@ export default {
       method: 'GET',
     })
       .then( response => response.ok ? response.text() : Promise.reject(response.statusCode) )
-      .then( html => { 
+      .then( html => {
         const matches = html.match(/var stateToken = ["']([^"']*)['"]/);
         const unconverted = matches && matches[1];
-        // Because we are scraping text that is intended to be read from files by the JS engine, 
+        // Because we are scraping text that is intended to be read from files by the JS engine,
         // the text is "raw" e.g. \x2D ("-") is in the string as separate characters
         // So lets forcably convert that:
         const handle = unconverted && unconverted.replace(/\\x([0-9A-F]{2})/g, (_,encoding) => String.fromCharCode(parseInt(encoding, 16)));

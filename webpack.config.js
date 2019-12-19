@@ -2,14 +2,14 @@ const path = require('path');
 
 const config  = {
   entry: './src/index.js',
-  devtool: 'source-map', 
+  devtool: 'source-map',
   output: {
     filename: 'idx.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'idx',
     libraryTarget: 'umd',
   },
-  module: { 
+  module: {
     rules: [
       {
         test: /\.js$/,
@@ -18,7 +18,11 @@ const config  = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
-            plugins: ['@babel/plugin-proposal-optional-chaining', ['@babel/transform-runtime', { corejs: 3}]],
+            plugins: [
+              '@babel/plugin-proposal-optional-chaining',
+              '@babel/plugin-proposal-nullish-coalescing-operator',
+              [ '@babel/transform-runtime', { corejs: 3} ],
+            ],
           }
         }
       }

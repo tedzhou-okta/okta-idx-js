@@ -9,6 +9,7 @@ import idx from '../../src/index';
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 const mockRequestIdentity = require('../mocks/request-identifier');
+const mockIdxResponse = mockRequestIdentity;
 const { Response } = jest.requireActual('cross-fetch');
 
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockRequestIdentity )) ) );
@@ -16,21 +17,67 @@ fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mo
 const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
 
-describe('idx-js', () => { 
-  it('loads', async () => { 
-    const idxState = await idx.start({ domain, stateHandle });
-    expect(idxState).toBeDefined();
-    expect(idxState.proceed).toBeDefined();
-    expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
-  });
+describe('idx-js', () => {
+  describe('start', () => {
 
-  it('populates neededToProceed', async () => { 
-    const idxState = await idx.start({ domain, stateHandle });
-    expect(idxState.neededToProceed).toMatchObject({
-      identify: [ { name: 'identifier', label: 'Username' } ],
-      'select-enroll-profile': [],
+    it('returns an idxState', async () => {
+      return idx.start({ domain, stateHandle })
+        .then( idxState => {
+          expect(idxState).toBeDefined();
+          expect(idxState.proceed).toBeDefined();
+          expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
+        });
+    });
+
+    it('populates neededToProceed with Ion data', async () => {
+      return idx.start({ domain, stateHandle })
+        .then( idxState => {
+          expect(idxState.neededToProceed).toMatchObject({
+            identify: [ { name: 'identifier', label: 'Username' } ],
+            'select-enroll-profile': [],
+          });
+        });
+    });
+
+    it('populates proceed to run remediation functions', async () => {
+      return idx.start({ domain, stateHandle })
+        .then( idxState => idxState.proceed('identify') )
+        .then( result => {
+          expect( result ).toMatchObject( mockIdxResponse );
+        });
+    });
+
+    it('rejects without a stateHandle', async () => {
+      return idx.start({ domain })
+        .then( () => {
+          fail('expected idx.start to reject when not given a stateHandle');
+        })
+        .catch( err => {
+          expect(err).toMatchObject({ error: 'stateHandle is required'});
+        });
+    });
+
+    it('rejects without a domain', async () => {
+      return idx.start({ stateHandle })
+        .then( () => {
+          fail('expected idx.start to reject when not given a domain');
+        })
+        .catch( err => {
+          expect(err).toMatchObject({ error: 'domain is required'});
+        });
+    });
+
+    describe('idxState.proceed', () => {
+      it('rejects if called with an invalid remediationChoice', async () => {
+        return idx.start({ domain, stateHandle })
+          .then( idxState => idxState.proceed('DOES_NOT_EXIST') )
+          .then( () => {
+            fail('expected idxState.proceed to reject');
+          })
+          .catch( err => {
+            expect(err).toBe('Unknown remediation choice: [DOES_NOT_EXIST]');
+          });
+      });
     });
   });
-
 });
-
