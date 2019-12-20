@@ -1,14 +1,6 @@
 import fetch from 'cross-fetch';
 
 export const introspect = async function introspect({ domain, stateHandle }) {
-  if( !stateHandle ) {
-    return Promise.reject({ error: 'stateHandle is required' });
-  }
-
-  if( !domain ) {
-    return Promise.reject({ error: 'domain is required' });
-  }
-
   const target = `${domain}/idp/idx/introspect`;
   return fetch(target, {
     method: 'POST',

@@ -1,7 +1,7 @@
 import { divideParamsByAutoStatus, generateRemediationFunction } from './remediationParser';
 import { introspect } from './introspect';
 
-const makeIdxState = function({ stateHandle, idxResponse }) {
+const makeIdxState = function( idxResponse ) {
   const { neededToProceed, sentWithProceed } = divideParamsByAutoStatus( idxResponse.remediation.value );
 
   const remediations = Object.fromEntries( idxResponse.remediation.value.map( remediation => {
@@ -15,7 +15,8 @@ const makeIdxState = function({ stateHandle, idxResponse }) {
     if( !remediations[remediationChoice] ) {
       return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
     }
-    return remediations[remediationChoice]({ ...paramsFromUser, ...sentWithProceed });
+    return remediations[remediationChoice]({ ...paramsFromUser, ...sentWithProceed[remediationChoice] })
+      .then( idxResponse => makeIdxState( idxResponse ) );
   };
 
   return {
@@ -35,8 +36,8 @@ const start = async function start({ domain, stateHandle }) {
   }
 
   const idxResponse = await introspect({ domain, stateHandle })
-    .catch( err => Promise.reject({ error: 'intropspect call failed', details: err }) );
-  const idxState = makeIdxState({ stateHandle, idxResponse });
+    .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
+  const idxState = makeIdxState( idxResponse );
   return idxState;
 };
 

@@ -13,10 +13,10 @@ export const divideParamsByAutoStatus = function divideParamsByAutoStatus( remed
 
   for( let remediation of remediationList ) {
     neededToProceed[remediation.name] = [];
-    sentWithProceed[remediation.name] = [];
+    sentWithProceed[remediation.name] = {};
     for( let field of remediation.value ) {
       if( fieldIsAutoSent( field ) ) {
-        sentWithProceed[remediation.name].push({ [field.name]: field.value ?? '' });
+        sentWithProceed[remediation.name][field.name] = field.value ?? '';
       } else {
         neededToProceed[remediation.name].push(field);
       }

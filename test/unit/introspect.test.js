@@ -16,26 +16,6 @@ describe('introspect', () => {
       });
   });
 
-  it('rejects without a stateHandle', async () => {
-    return introspect({ domain: 'http://okta.example.com' })
-      .then( () => {
-        fail('expected introspect to reject when not given a stateHandle');
-      })
-      .catch( err => {
-        expect(err).toMatchObject({ error: 'stateHandle is required'});
-      });
-  });
-
-  it('rejects without a domain', async () => {
-    return introspect({ stateHandle: 'FAKEY-FAKE' })
-      .then( () => {
-        fail('expected introspect to reject when not given a domain');
-      })
-      .catch( err => {
-        expect(err).toMatchObject({ error: 'domain is required'});
-      });
-  });
-
   it('rejects if the idxResponse is an error', async () => {
     fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse ), { status: 500 }) ) );
     return introspect({ domain: 'http://okta.example.com', stateHandle: 'FAKEY-FAKE' })
