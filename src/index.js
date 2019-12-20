@@ -1,52 +1,43 @@
-import fetch from 'cross-fetch';
+import { divideParamsByAutoStatus, generateRemediationFunction } from './remediationParser';
+import { introspect } from './introspect';
 
-const makeIdxState = function({ stateHandle, idxResponse }) {
-  if( !stateHandle ) { 
-    return Promise.reject({ error: 'stateHandle is required' });
-  }
+const makeIdxState = function( idxResponse ) {
+  const { neededToProceed, sentWithProceed } = divideParamsByAutoStatus( idxResponse.remediation.value );
 
-  if( !idxResponse ) { 
-    return Promise.reject({ error: 'idxResponse is required' });
-  }
-
-  const proceed = async function() {
-  };
-
-  const fieldFilter = function( field ) { 
-    if(!field.visible && field.value) { 
-      return false;
-    }
-    return true;
-  };
-
-  const neededToProceed = Object.fromEntries( idxResponse.remediation.value.map( remediation => { 
-    return [ remediation.name, remediation.value.filter( fieldFilter ) ];
+  const remediations = Object.fromEntries( idxResponse.remediation.value.map( remediation => {
+    return [
+      remediation.name,
+      generateRemediationFunction(remediation),
+    ]
   }) );
+
+  const proceed = async function( remediationChoice, paramsFromUser ) {
+    if( !remediations[remediationChoice] ) {
+      return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
+    }
+    return remediations[remediationChoice]({ ...paramsFromUser, ...sentWithProceed[remediationChoice] })
+      .then( idxResponse => makeIdxState( idxResponse ) );
+  };
 
   return {
     proceed,
     neededToProceed,
-    rawIdxState: idxResponse, 
+    rawIdxState: idxResponse,
   };
 };
 
-const introspect = async function introspect({ domain, stateHandle }) { 
-  const target = `${domain}/idp/idx/introspect`;
-  return fetch(target, { 
-    method: 'POST',
-    headers: { 
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({ stateToken: stateHandle })
-  })
-    .then( response => response.ok ? response.json() : Promise.reject( response ) );
-}
-
-
 const start = async function start({ domain, stateHandle }) {
+  if( !stateHandle ) {
+    return Promise.reject({ error: 'stateHandle is required' });
+  }
+
+  if( !domain ) {
+    return Promise.reject({ error: 'domain is required' });
+  }
+
   const idxResponse = await introspect({ domain, stateHandle })
-    .catch( e => console.error('introspect fail', e) );
-  const idxState = makeIdxState({ stateHandle, idxResponse });
+    .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
+  const idxState = makeIdxState( idxResponse );
   return idxState;
 };
 
