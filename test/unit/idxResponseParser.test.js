@@ -9,9 +9,11 @@ const mockSuccessIdxResponse = require('../mocks/success');
 
 jest.mock('../../src/generateIdxAction');
 jest.mock('../../src/remediationParser');
+jest.mock('../../src/actionParser');
 
 // imports to target for mockery
-import { divideActionParamsByAutoStatus, generateRemediationFunctions } from '../../src/remediationParser';
+import { generateRemediationFunctions } from '../../src/remediationParser';
+import { divideActionParamsByAutoStatus } from '../../src/actionParser';
 import generateIdxAction from '../../src/generateIdxAction';
 
 generateIdxAction.mockReturnValue('generated function');
@@ -86,13 +88,6 @@ describe('idxResponseParser', () => {
   });
 
   describe('parseIdxResponse', () => { 
-
-    it('divides remediation values', () => { 
-      const { neededToProceed, sentWithProceed } = parseIdxResponse( mockIdxResponse );
-      expect( divideActionParamsByAutoStatus.mock.calls.length ).toBe(1);
-      expect( neededToProceed ).toBe('neededParams');
-      expect( sentWithProceed ).toBe('existingParams');
-    });
 
     it('builds remediation functions', () => {
       const { remediations } = parseIdxResponse( mockIdxResponse );

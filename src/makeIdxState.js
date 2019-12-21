@@ -1,20 +1,26 @@
 import { parseIdxResponse } from './idxResponseParser';
 
-const makeIdxState = function( idxResponse ) {
+const makeIdxState = function makeIdxState( idxResponse ) {
 
-  const { remediations, context, actions, neededToProceed, sentWithProceed } = parseIdxResponse( idxResponse );
-  const proceed = async function( remediationChoice, paramsFromUser ) {
+  const { remediations, context, actions } = parseIdxResponse( idxResponse );
+
+  const neededToProceed = {};
+  Object.entries(remediations).forEach( ([name, action]) => {
+    neededToProceed[name] = action.neededParams;
+  });
+
+  const proceed = async function( remediationChoice, paramsFromUser={} ) {
     if( !remediations[remediationChoice] ) {
       return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
     }
-    return remediations[remediationChoice]({ ...paramsFromUser, ...sentWithProceed[remediationChoice] })
-      .then( idxResponse => makeIdxState( idxResponse ) );
+
+    return remediations[remediationChoice](paramsFromUser)
   };
 
   return {
     proceed,
     neededToProceed,
-    actions, 
+    actions,
     context,
     rawIdxState: idxResponse,
   };

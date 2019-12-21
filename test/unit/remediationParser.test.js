@@ -1,4 +1,4 @@
-import { divideActionParamsByAutoStatus, generateRemediationFunctions } from '../../src/remediationParser';
+import { generateRemediationFunctions } from '../../src/remediationParser';
 
 jest.mock('cross-fetch');
 jest.mock('../../src/generateIdxAction');
@@ -16,22 +16,6 @@ generateIdxAction.mockImplementation( () => 'generated');
 
 describe('remediationParser', () => {
 
-  describe('divideActionsParamsByAutoStatus', () => {
-
-    it('parses and splits', async () => {
-      const { neededParams, existingParams } = divideActionParamsByAutoStatus( mockIdxResponse.remediation.value );
-
-      expect( neededParams ).toMatchObject({
-        identify: [ { name: 'identifier', label: 'Username' } ],
-        'select-enroll-profile': [],
-      });
-
-      expect( existingParams ).toMatchObject({
-        identify: {"stateHandle": "02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"},
-        'select-enroll-profile': {"stateHandle": "02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"},
-      });
-    });
-  });
 
   describe('generateRemediationFunctions', () => {
 

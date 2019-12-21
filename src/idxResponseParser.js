@@ -1,4 +1,5 @@
-import { divideActionParamsByAutoStatus, generateRemediationFunctions } from './remediationParser';
+import { generateRemediationFunctions } from './remediationParser';
+import { divideActionParamsByAutoStatus } from './actionParser';
 import generateIdxAction from './generateIdxAction';
 
 export const SIMPLE_CONTEXT_FIELDS = [
@@ -56,19 +57,15 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
       });
     }
   }
-
   return { context, actions };
 };
 
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
 
-  const { neededParams, existingParams } = divideActionParamsByAutoStatus( idxResponse.remediation.value );
-  const remediations = generateRemediationFunctions( idxResponse.remediation.value );
+  const remediations = generateRemediationFunctions( idxResponse.remediation?.value || [] );
   const { context, actions } = parseNonRemediations( idxResponse );
 
   return {
-    neededToProceed: neededParams,
-    sentWithProceed: existingParams,
     remediations,
     context,
     actions,

@@ -4,10 +4,14 @@ const mockIdxResponse = require('../mocks/request-identifier');
 const mockPollingIdxResponse = require('../mocks/poll-for-password');
 
 jest.mock('cross-fetch');
+jest.mock('../../src/makeIdxState');
 const { Response } = jest.requireActual('cross-fetch');
 
-import fetch from 'cross-fetch'; // import to target for mockery
+// import targets for mockery
+import fetch from 'cross-fetch'; 
+import makeIdxState from '../../src/makeIdxState';
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+makeIdxState.mockReturnValue('mock IdxState');
 
 describe('generateIdxAction', () => { 
   it('builds a function', () => {
@@ -15,12 +19,12 @@ describe('generateIdxAction', () => {
     expect(typeof actionFunction).toBe('function');
   });
 
-  it('returns a function that returns a fetch result', async () => {
+  it('returns a function that returns an idxState', async () => {
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
       .then( result => {
         expect( fetch.mock.calls.length ).toBe(1);
-        expect( result ).toMatchObject( mockIdxResponse );
+        expect( result ).toBe('mock IdxState');
       });
   });
 
