@@ -24,7 +24,9 @@ describe('idx-js', () => {
       return idx.start({ domain, stateHandle })
         .then( idxState => {
           expect(idxState).toBeDefined();
-          expect(idxState.proceed).toBeDefined();
+          expect(idxState.context).toBeDefined();
+          expect(typeof idxState.proceed).toBe('function');
+          expect(typeof idxState.actions.cancel).toBe('function');
           expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
         });
     });
@@ -41,11 +43,10 @@ describe('idx-js', () => {
 
     it('populates proceed to run remediation functions', async () => {
       return idx.start({ domain, stateHandle })
-        .then( idxState => idxState.proceed('identify') )
-        .then( result => {
-          expect( result ).toMatchObject( mockIdxResponse );
-        });
-    });
+        .then( idxState => { 
+          expect( typeof idxState.proceed ).toBe('function');
+        })
+    }); 
 
     it('rejects without a stateHandle', async () => {
       return idx.start({ domain })
@@ -78,6 +79,23 @@ describe('idx-js', () => {
             expect(err).toBe('Unknown remediation choice: [DOES_NOT_EXIST]');
           });
       });
+
+      it('returns a new idxState', async () => {
+        return idx.start({ domain, stateHandle })
+          .then( idxState => idxState.proceed('identify') )
+          .then( result => {
+            expect( result.neededToProceed ).toMatchObject({ 
+              identify: [ { 
+                label: 'Username',
+                name: 'identifier',
+              } ],
+            });
+          expect(result.context).toBeDefined();
+          expect(typeof result.proceed).toBe('function');
+          expect(typeof result.actions.cancel).toBe('function');
+          expect(result.rawIdxState).toMatchObject(mockRequestIdentity);
+          });
+      }); 
     });
   });
 });

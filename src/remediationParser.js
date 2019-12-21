@@ -1,4 +1,4 @@
-import fetch from 'cross-fetch';
+import generateIdxAction from './generateIdxAction';
 
 export const fieldIsAutoSent = function( field ) {
   if(!field.visible && field.value) {
@@ -7,36 +7,32 @@ export const fieldIsAutoSent = function( field ) {
   return false;
 };
 
-export const divideParamsByAutoStatus = function divideParamsByAutoStatus( remediationList ) {
-  const neededToProceed = {};
-  const sentWithProceed = {};
+export const divideActionParamsByAutoStatus = function divideActionParamsByAutoStatus( remediationList ) {
+  const neededParams = {};
+  const existingParams = {};
 
   for( let remediation of remediationList ) {
-    neededToProceed[remediation.name] = [];
-    sentWithProceed[remediation.name] = {};
+    neededParams[remediation.name] = [];
+    existingParams[remediation.name] = {};
     for( let field of remediation.value ) {
       if( fieldIsAutoSent( field ) ) {
-        sentWithProceed[remediation.name][field.name] = field.value ?? '';
+        existingParams[remediation.name][field.name] = field.value ?? '';
       } else {
-        neededToProceed[remediation.name].push(field);
+        neededParams[remediation.name].push(field);
       }
     }
   }
-  return { neededToProceed, sentWithProceed };
+  return { neededParams, existingParams };
 };
 
-export const generateRemediationFunction = function generateRemediationFunction( remediation ) {
-  const target = remediation.href;
-  return async function (params) {
-    return fetch(target, {
-      method: remediation.method,
-      headers: {
-        'content-type': remediation.accepts,
-      },
-      body: JSON.stringify( params )
-    })
-      .then( response => response.ok ? response.json() : Promise.reject( response ) );
-  };
+export const generateRemediationFunctions = function generateRemediationFunctions( remediationValue ) { 
+
+  return Object.fromEntries( remediationValue.map( remediation => {
+    return [
+      remediation.name,
+      generateIdxAction(remediation),
+    ]
+  }) );
 };
 
 

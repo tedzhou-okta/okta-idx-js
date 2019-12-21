@@ -1,16 +1,9 @@
-import { divideParamsByAutoStatus, generateRemediationFunction } from './remediationParser';
+import { parseIdxResponse } from './idxResponseParser';
 import { introspect } from './introspect';
 
 const makeIdxState = function( idxResponse ) {
-  const { neededToProceed, sentWithProceed } = divideParamsByAutoStatus( idxResponse.remediation.value );
 
-  const remediations = Object.fromEntries( idxResponse.remediation.value.map( remediation => {
-    return [
-      remediation.name,
-      generateRemediationFunction(remediation),
-    ]
-  }) );
-
+  const { remediations, context, actions, neededToProceed, sentWithProceed } = parseIdxResponse( idxResponse );
   const proceed = async function( remediationChoice, paramsFromUser ) {
     if( !remediations[remediationChoice] ) {
       return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
@@ -22,6 +15,8 @@ const makeIdxState = function( idxResponse ) {
   return {
     proceed,
     neededToProceed,
+    actions, 
+    context,
     rawIdxState: idxResponse,
   };
 };
