@@ -1,4 +1,4 @@
-import { introspect } from '../../src/introspect';
+import introspect from '../../src/introspect';
 
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery

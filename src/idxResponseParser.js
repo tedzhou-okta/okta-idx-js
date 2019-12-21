@@ -1,12 +1,15 @@
 import { divideActionParamsByAutoStatus, generateRemediationFunctions } from './remediationParser';
 import generateIdxAction from './generateIdxAction';
 
-export const SIMPLE_CONTEXT_FIELDS = [ 
+export const SIMPLE_CONTEXT_FIELDS = [
   'expiresAt',
   'step',
   'intent',
   'user',
   'factors',
+  'messages',
+  'terminal',
+  'success',
 ];
 
 export const COMPLEX_CONTEXT_FIELDS = [
@@ -16,28 +19,29 @@ export const COMPLEX_CONTEXT_FIELDS = [
 export const SIMPLE_ACTION_FIELDS = [
   'cancel',
 ];
+// TODO: authenticatorChallenge?
 
-export const parseNonRemediations = function parseNonRemediations( idxResponse ) { 
+export const parseNonRemediations = function parseNonRemediations( idxResponse ) {
   const actions = {};
   const context = {};
 
   // Context fields that are unchanged
-  for( let field of SIMPLE_CONTEXT_FIELDS ) { 
-    if( idxResponse[field] ) {  
+  for( let field of SIMPLE_CONTEXT_FIELDS ) {
+    if( idxResponse[field] ) {
       context[field] = idxResponse[field];
     }
   }
 
   // Action fields that are straightforward
-  for( let field of SIMPLE_ACTION_FIELDS ) { 
-    if( idxResponse[field] ) {  
+  for( let field of SIMPLE_ACTION_FIELDS ) {
+    if( idxResponse[field] ) {
       actions[field] = generateIdxAction(idxResponse[field]);
     }
   }
-  
+
   // Fields that are part context and part action
-  for( let field of COMPLEX_CONTEXT_FIELDS ) { 
-    if( idxResponse[field] ) { 
+  for( let field of COMPLEX_CONTEXT_FIELDS ) {
+    if( idxResponse[field] ) {
       const { value: fieldValue, ...info} = idxResponse[field];
       context[field] = info; // add the non-action parts as context
       context[field].value = {};
@@ -45,7 +49,7 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
         if(value.rel) { // is [field].value[subField] an action?
           // add any "action" value subfields to actions
           actions[`${field}-${subField.name || subField}`] = generateIdxAction(value);
-        } else { 
+        } else {
           // add non-action value subfields to context
           context[field].value[subField] = value;
         }
@@ -56,17 +60,17 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
   return { context, actions };
 };
 
-export const parseIdxResponse = function parseIdxResponse( idxResponse ) { 
+export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
 
   const { neededParams, existingParams } = divideActionParamsByAutoStatus( idxResponse.remediation.value );
   const remediations = generateRemediationFunctions( idxResponse.remediation.value );
   const { context, actions } = parseNonRemediations( idxResponse );
 
-  return { 
+  return {
     neededToProceed: neededParams,
     sentWithProceed: existingParams,
     remediations,
     context,
-    actions, 
+    actions,
   };
 };

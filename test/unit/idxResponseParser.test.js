@@ -3,6 +3,9 @@ import { parseNonRemediations, parseIdxResponse } from '../../src/idxResponsePar
 const mockIdxResponse = require('../mocks/challenge-password');
 const mockSmallIdxResponse = require('../mocks/request-identifier');
 const mockComplexContextIdxResponse = require('../mocks/poll-for-password');
+const mockTerminalIdxResponse = require('../mocks/terminal-return-email');
+const mockMessageIdxResponse = require('../mocks/unknown-user');
+const mockSuccessIdxResponse = require('../mocks/success');
 
 jest.mock('../../src/generateIdxAction');
 jest.mock('../../src/remediationParser');
@@ -18,7 +21,7 @@ divideActionParamsByAutoStatus.mockReturnValue( { neededParams: 'neededParams', 
 describe('idxResponseParser', () => { 
   describe('parseNonRemediations', () => { 
 
-    it('filters out simple context items', () => { 
+    it('copies simple context items', () => { 
       const { context } = parseNonRemediations( mockIdxResponse );
       expect( context ).toMatchObject({
         expiresAt: mockIdxResponse.expiresAt,
@@ -26,6 +29,21 @@ describe('idxResponseParser', () => {
         intent: mockIdxResponse.intent,
         user: mockIdxResponse.user,
       });
+    });
+
+    it('copies terminal messages', () => { 
+      const { context } = parseNonRemediations( mockTerminalIdxResponse );
+      expect( context.terminal ).toMatchObject( mockTerminalIdxResponse.terminal );
+    });
+
+    it('copies non-terminal messages', () => { 
+      const { context } = parseNonRemediations( mockMessageIdxResponse );
+      expect( context.messages ).toMatchObject( mockMessageIdxResponse.messages );
+    });
+
+    it('copies token info', () => { 
+      const { context } = parseNonRemediations( mockSuccessIdxResponse );
+      expect( context.success ).toMatchObject( mockSuccessIdxResponse.success );
     });
 
     it('handles missing simple context items', () => { 
