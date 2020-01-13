@@ -1,5 +1,5 @@
 const fieldIsAutoSent = function( field ) {
-  if(!field.visible && field.value) {
+  if (!field.visible && field.value) {
     return true;
   }
   return false;
@@ -9,8 +9,8 @@ const divideSingleActionParams = function divideSingleActionParams( action ) {
   const neededParamsForAction = [];
   const existingParamsForAction = {};
 
-  for( let field of action.value ) {
-    if( fieldIsAutoSent( field ) ) {
+  for ( let field of action.value ) {
+    if ( fieldIsAutoSent( field ) ) {
       existingParamsForAction[field.name] = field.value ?? '';
     } else {
       neededParamsForAction.push(field);
@@ -25,7 +25,7 @@ export const divideActionParamsByAutoStatus = function divideActionParamsByAutoS
   const neededParams = {};
   const existingParams = {};
 
-  for( let action of actionList ) {
+  for ( let action of actionList ) {
     const { neededParamsForAction, existingParamsForAction } = divideSingleActionParams(action);
     neededParams[action.name] = neededParamsForAction;
     existingParams[action.name] = existingParamsForAction;

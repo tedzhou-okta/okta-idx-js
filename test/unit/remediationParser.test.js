@@ -22,8 +22,8 @@ describe('remediationParser', () => {
     it('builds a collection of generated functions', async () => {
       const remediationFunctions = generateRemediationFunctions(mockIdxResponse.remediation.value);
       expect( Object.keys(remediationFunctions) ).toEqual( ['identify', 'select-enroll-profile'] );
-      expect(generateIdxAction.mock.calls[0]).toMatchObject([mockIdxResponse.remediation.value[0]]);
-      expect(generateIdxAction.mock.calls[1]).toMatchObject([mockIdxResponse.remediation.value[1]]);
+      expect(generateIdxAction.mock.calls[0]).toEqual([mockIdxResponse.remediation.value[0]]);
+      expect(generateIdxAction.mock.calls[1]).toEqual([mockIdxResponse.remediation.value[1]]);
       expect(remediationFunctions['identify']).toBe('generated');
       expect(remediationFunctions['select-enroll-profile']).toBe('generated');
     });

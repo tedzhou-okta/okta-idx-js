@@ -24,7 +24,15 @@ describe('generateIdxAction', () => {
     return actionFunction()
       .then( result => {
         expect( fetch.mock.calls.length ).toBe(1);
-        expect( result ).toBe('mock IdxState');
+        expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
+        expect( fetch.mock.calls[0][1] ).toEqual( { 
+          body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          headers: { 
+            'content-type': 'application/vnd.okta.v1+json',
+          },
+          method: "POST"
+        });
+        expect( result ).toBe('mock IdxState')
       });
   });
 

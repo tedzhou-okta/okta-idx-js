@@ -1,62 +1,55 @@
 import { generateRemediationFunctions } from './remediationParser';
-import { divideActionParamsByAutoStatus } from './actionParser';
 import generateIdxAction from './generateIdxAction';
 
-export const SIMPLE_CONTEXT_FIELDS = [
-  'expiresAt',
-  'step',
-  'intent',
-  'user',
-  'factors',
-  'messages',
-  'terminal',
-  'success',
-];
+const SKIP_FIELDS = {
+  remediation: true, // remediations are put into proceed/neededToProceed
+  context: true, // the API response of 'context' isn't externally useful.  We ignore it and put all non-action (contextual) info into idxState.context
+  cancel: true, // already included in 'actions'
+};
 
-export const COMPLEX_CONTEXT_FIELDS = [
-  'factor',
-];
-
-export const SIMPLE_ACTION_FIELDS = [
-  'cancel',
-];
-// TODO: authenticatorChallenge?
+const SIMPLE_ACTIONS = {
+  cancel: true, // 'cancel' is a top-level always-present action
+};
 
 export const parseNonRemediations = function parseNonRemediations( idxResponse ) {
   const actions = {};
   const context = {};
 
-  // Context fields that are unchanged
-  for( let field of SIMPLE_CONTEXT_FIELDS ) {
-    if( idxResponse[field] ) {
+  Object.keys(SIMPLE_ACTIONS).filter( field => !!idxResponse[field]).forEach( field => {
+    actions[field] = generateIdxAction(idxResponse[field]);
+  });
+
+  Object.keys(idxResponse).filter( field => !SKIP_FIELDS[field]).forEach( field => {
+    const fieldIsObject = typeof idxResponse[field] === 'object' && !!idxResponse[field];
+
+    if (!fieldIsObject) {
+      // simple fields are contextual info
       context[field] = idxResponse[field];
+      return;
     }
-  }
 
-  // Action fields that are straightforward
-  for( let field of SIMPLE_ACTION_FIELDS ) {
-    if( idxResponse[field] ) {
-      actions[field] = generateIdxAction(idxResponse[field]);
-    }
-  }
+    const { value: fieldValue, type, ...info} = idxResponse[field];
+    context[field] = { type, ...info}; // add the non-action parts as context
 
-  // Fields that are part context and part action
-  for( let field of COMPLEX_CONTEXT_FIELDS ) {
-    if( idxResponse[field] ) {
-      const { value: fieldValue, ...info} = idxResponse[field];
-      context[field] = info; // add the non-action parts as context
-      context[field].value = {};
-      Object.entries(fieldValue).forEach( ([subField, value]) => {
-        if(value.rel) { // is [field].value[subField] an action?
-          // add any "action" value subfields to actions
-          actions[`${field}-${subField.name || subField}`] = generateIdxAction(value);
-        } else {
-          // add non-action value subfields to context
-          context[field].value[subField] = value;
-        }
-      });
+    if ( type !== 'object' ) {
+      // only object values hold actions
+      context[field].value = fieldValue;
+      return;
     }
-  }
+
+    // We are an object field containing an object value
+    context[field].value = {};
+    Object.entries(fieldValue).forEach( ([subField, value]) => {
+      if (value.rel) { // is [field].value[subField] an action?
+        // add any "action" value subfields to actions
+        actions[`${field}-${subField.name || subField}`] = generateIdxAction(value);
+      } else {
+        // add non-action value subfields to context
+        context[field].value[subField] = value;
+      }
+    });
+  });
+
   return { context, actions };
 };
 

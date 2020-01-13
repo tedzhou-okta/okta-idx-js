@@ -4,7 +4,7 @@ import makeIdxState from './makeIdxState';
 
 const generateDirectFetch = function generateDirectFetch( actionDefinition, existingParams = {} ) {
   const target = actionDefinition.href;
-  return async function (params) {
+  return async function(params) {
     return fetch(target, {
       method: actionDefinition.method,
       headers: {
@@ -18,9 +18,9 @@ const generateDirectFetch = function generateDirectFetch( actionDefinition, exis
 };
 
 const generatePollingFetch = function generateDirectFetch( actionDefinition, existingParams = {} ) {
-  // TODO: Discussions ongoing about when to terminate polling
+  // TODO: Discussions ongoing about when/how to terminate polling: OKTA-246581
   const target = actionDefinition.href;
-  return async function (params) {
+  return async function(params) {
     return fetch(target, {
       method: actionDefinition.method,
       headers: {

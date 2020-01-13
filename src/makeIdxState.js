@@ -9,12 +9,12 @@ const makeIdxState = function makeIdxState( idxResponse ) {
     neededToProceed[name] = action.neededParams;
   });
 
-  const proceed = async function( remediationChoice, paramsFromUser={} ) {
-    if( !remediations[remediationChoice] ) {
+  const proceed = async function( remediationChoice, paramsFromUser = {} ) {
+    if ( !remediations[remediationChoice] ) {
       return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
     }
 
-    return remediations[remediationChoice](paramsFromUser)
+    return remediations[remediationChoice](paramsFromUser);
   };
 
   return {

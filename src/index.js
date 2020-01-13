@@ -2,11 +2,11 @@ import introspect from './introspect';
 import makeIdxState from './makeIdxState';
 
 const start = async function start({ domain, stateHandle }) {
-  if( !stateHandle ) {
+  if ( !stateHandle ) {
     return Promise.reject({ error: 'stateHandle is required' });
   }
 
-  if( !domain ) {
+  if ( !domain ) {
     return Promise.reject({ error: 'domain is required' });
   }
 

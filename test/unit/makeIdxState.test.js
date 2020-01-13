@@ -5,7 +5,9 @@ jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 const { Response } = jest.requireActual('cross-fetch');
 
-fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+const setFetchMock = (mock) => fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mock )) ) );
+
+setFetchMock(mockIdxResponse);
 
 describe('makeIdxState', () => {
   it('returns an idxState', () => {
@@ -14,12 +16,12 @@ describe('makeIdxState', () => {
     expect(idxState.context).toBeDefined();
     expect(typeof idxState.proceed).toBe('function');
     expect(typeof idxState.actions.cancel).toBe('function');
-    expect(idxState.rawIdxState).toMatchObject(mockIdxResponse);
+    expect(idxState.rawIdxState).toEqual(mockIdxResponse);
   });
 
   it('populates neededToProceed with Ion data', () => {
     const idxState = makeIdxState( mockIdxResponse );
-    expect(idxState.neededToProceed).toMatchObject({
+    expect(idxState.neededToProceed).toEqual({
       identify: [ { name: 'identifier', label: 'Username' } ],
       'select-enroll-profile': [],
     });
@@ -44,18 +46,21 @@ describe('makeIdxState', () => {
 
     it('returns a new idxState', async () => {
       const idxState = makeIdxState( mockIdxResponse );
+      const mockFollowup = { ...mockIdxResponse, remediations: []};
+      setFetchMock( mockFollowup );
       return idxState.proceed('identify')
         .then( result => {
-          expect( result.neededToProceed ).toMatchObject({
-            identify: [ {
-              label: 'Username',
-              name: 'identifier',
-            } ],
-          });
+          expect( result.neededToProceed.identify ).toEqual( [{
+            label: 'Username',
+            name: 'identifier',
+          }] );
           expect(result.context).toBeDefined();
           expect(typeof result.proceed).toBe('function');
           expect(typeof result.actions.cancel).toBe('function');
-          expect(result.rawIdxState).toMatchObject(mockIdxResponse);
+          expect(result.rawIdxState).toEqual(mockFollowup);
+        })
+        .finally( () => { 
+          setFetchMock( mockIdxResponse ); // test cleanup
         });
     });
   });
@@ -67,7 +72,7 @@ describe('makeIdxState', () => {
         .then( result => {
           // Note: cancel won't return this data
           // this is verifying the parsing happens on mock data
-          expect(result.rawIdxState).toMatchObject(mockIdxResponse);
+          expect(result.rawIdxState).toEqual(mockIdxResponse);
         });
     });
   });

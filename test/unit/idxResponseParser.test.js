@@ -25,22 +25,32 @@ describe('idxResponseParser', () => {
 
     it('copies simple context items', () => { 
       const { context } = parseNonRemediations( mockIdxResponse );
-      expect( context ).toMatchObject({
+      expect( context ).toEqual({
         expiresAt: mockIdxResponse.expiresAt,
         step: mockIdxResponse.step,
         intent: mockIdxResponse.intent,
         user: mockIdxResponse.user,
+        stateHandle: mockIdxResponse.stateHandle,
+        version: '1.0.0',
+        factor: { 
+          type: 'object', 
+          value: { 
+            factorId: '00u1wlnlh2x3sQemR357',
+            factorProfileId: 'fpr1w2vlszZt2g3E4357',
+            factorType: 'password',
+          },
+        },
       });
     });
 
     it('copies terminal messages', () => { 
       const { context } = parseNonRemediations( mockTerminalIdxResponse );
-      expect( context.terminal ).toMatchObject( mockTerminalIdxResponse.terminal );
+      expect( context.terminal ).toEqual( mockTerminalIdxResponse.terminal );
     });
 
     it('copies non-terminal messages', () => { 
       const { context } = parseNonRemediations( mockMessageIdxResponse );
-      expect( context.messages ).toMatchObject( mockMessageIdxResponse.messages );
+      expect( context.messages ).toEqual( mockMessageIdxResponse.messages );
     });
 
     it('copies token info', () => { 
