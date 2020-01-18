@@ -1,30 +1,27 @@
 import { generateRemediationFunctions } from './remediationParser';
 import generateIdxAction from './generateIdxAction';
 
-const SKIP_FIELDS = {
-  remediation: true, // remediations are put into proceed/neededToProceed
-  context: true, // the API response of 'context' isn't externally useful.  We ignore it and put all non-action (contextual) info into idxState.context
-  cancel: true, // already included in 'actions'
-};
-
-const SIMPLE_ACTIONS = {
-  cancel: true, // 'cancel' is a top-level always-present action
-};
+const SKIP_FIELDS = Object.fromEntries([
+  'remediation', // remediations are put into proceed/neededToProceed
+  'context', // the API response of 'context' isn't externally useful.  We ignore it and put all non-action (contextual) info into idxState.context
+].map( (field) => [ field, !!'skip this field' ] ));
 
 export const parseNonRemediations = function parseNonRemediations( idxResponse ) {
   const actions = {};
   const context = {};
 
-  Object.keys(SIMPLE_ACTIONS).filter( field => !!idxResponse[field]).forEach( field => {
-    actions[field] = generateIdxAction(idxResponse[field]);
-  });
-
   Object.keys(idxResponse).filter( field => !SKIP_FIELDS[field]).forEach( field => {
     const fieldIsObject = typeof idxResponse[field] === 'object' && !!idxResponse[field];
 
-    if (!fieldIsObject) {
+    if ( !fieldIsObject ) {
       // simple fields are contextual info
       context[field] = idxResponse[field];
+      return;
+    }
+
+    if ( idxResponse[field].rel ) {
+      // top level actions
+      actions[idxResponse[field].name] = generateIdxAction(idxResponse[field]);
       return;
     }
 

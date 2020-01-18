@@ -17,7 +17,7 @@ const generateDirectFetch = function generateDirectFetch( actionDefinition, exis
   };
 };
 
-const generatePollingFetch = function generateDirectFetch( actionDefinition, existingParams = {} ) {
+const generatePollingFetch = function generatePollingFetch( actionDefinition, existingParams = {} ) {
   // TODO: Discussions ongoing about when/how to terminate polling: OKTA-246581
   const target = actionDefinition.href;
   return async function(params) {
@@ -34,7 +34,7 @@ const generatePollingFetch = function generateDirectFetch( actionDefinition, exi
 };
 
 const generateIdxAction = function generateIdxAction( actionDefinition ) {
-  const generator =  actionDefinition.refresh ? generateDirectFetch : generatePollingFetch;
+  const generator =  actionDefinition.refresh ? generatePollingFetch : generateDirectFetch;
   const { neededParams, existingParams } = divideActionParamsByAutoStatus( actionDefinition );
 
   const action = generator( actionDefinition, existingParams[actionDefinition.name] );
