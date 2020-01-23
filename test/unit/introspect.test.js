@@ -1,4 +1,4 @@
-import { introspect } from '../../src/introspect';
+import introspect from '../../src/introspect';
 
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
@@ -12,7 +12,7 @@ describe('introspect', () => {
   it('returns an idxResponse on success', async () => {
     return introspect({ domain: 'http://okta.example.com', stateHandle: 'FAKEY-FAKE' })
       .then( result => {
-        expect(result).toMatchObject(mockIdxResponse);
+        expect(result).toEqual(mockIdxResponse);
       });
   });
 

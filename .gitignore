@@ -12,6 +12,7 @@ yarn-error.log*
 package-lock.json
 dist
 coverage
+demo
 
 # Ignore TCK-related files in all folders
 okta-oidc-tck*

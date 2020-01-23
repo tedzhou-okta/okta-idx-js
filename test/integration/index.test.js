@@ -25,6 +25,17 @@ describe('idx-js', () => {
     return idx.start({ domain: config.issuerUrl, stateHandle })
       .then( idxState => {
         expect(idxState).toBeDefined();
+        expect(idxState.rawIdxState).toBeDefined();
+        expect(typeof idxState.proceed).toBe('function');
+        expect(idxState.neededToProceed).toMatchObject({
+          identify: [ {
+            name: 'identifier',
+            label: 'Username'
+          }],
+          'select-enroll-profile': [],
+        });
+        expect(typeof idxState.actions.cancel).toBe('function');
+        expect(idxState.context).toBeDefined();
       });
   });
 
@@ -33,7 +44,15 @@ describe('idx-js', () => {
     const stateHandle = config.stateHandle;
     return idx.start({ domain: config.issuerUrl, stateHandle })
       .then( idxState => idxState.proceed('identify', { identifier: config.userIdentifier }) )
-      .then( idxResponse => console.warn(JSON.stringify(idxResponse, null, 2)) );
+      .then( idxState => { 
+        console.warn('identify results');
+        console.warn(JSON.stringify(idxState, null, 2));
+        return idxState.proceed('select-factor', { factorId: idxState.rawIdxState.remediation.value[0].value[0].options[0].value });
+      })
+      .then( idxState => { 
+        console.warn('select-factor results');
+        console.warn(JSON.stringify(idxState, null, 2));
+      });
   });
 
 });

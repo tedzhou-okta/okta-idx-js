@@ -11,7 +11,7 @@
     "lint": "eslint src",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "test": "yarn test:unit"
+    "test": "yarn lint && yarn test:unit"
   },
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
