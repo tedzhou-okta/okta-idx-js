@@ -9,7 +9,7 @@ const introspect = async function introspect({ domain, stateHandle }) {
     },
     body: JSON.stringify({ stateToken: stateHandle })
   })
-    .then( response => response.ok ? response.json() : Promise.reject( response ) );
+    .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) );
 };
 
 export default introspect;
