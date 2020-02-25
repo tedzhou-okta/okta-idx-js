@@ -28,7 +28,7 @@ const generatePollingFetch = function generatePollingFetch( actionDefinition, ex
       },
       body: JSON.stringify({ ...params, ...existingParams })
     })
-      .then( response => response.ok ? response.json() : Promise.reject( response ) )
+      .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) )
       .then( idxResponse => makeIdxState(idxResponse) );
   };
 };
