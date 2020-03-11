@@ -1,0 +1,9 @@
+test_suites:
+- name: publish
+  job_name: publish
+  script_path: /root/okta/okta-idx-js/scripts
+  sort_order: '1'
+  timeout: '30'
+  script_name: publish
+  criteria: MERGE
+  queue_name: small
