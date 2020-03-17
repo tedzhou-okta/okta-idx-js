@@ -12,8 +12,25 @@ const generateDirectFetch = function generateDirectFetch( actionDefinition, exis
       },
       body: JSON.stringify({ ...params, ...existingParams })
     })
-      .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) )
-      .then( idxResponse => makeIdxState(idxResponse) );
+      // .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) )
+      .then( response => {
+        const resp = response.json();
+        if (response.ok) {
+          return resp;
+        } else {
+          const token = resp.stateHandle;
+          const isV1StateToken = !!(token && token.startsWith('00'));
+          if (isV1StateToken) {
+            return resp.then( err => Promise.reject(err));
+          } else {
+            return resp;
+          }
+        }
+      })
+      .then( idxResponse => {
+        console.log('********generateDirectFetch*******');
+        return makeIdxState(idxResponse);
+      });
   };
 };
 
@@ -29,7 +46,7 @@ const generatePollingFetch = function generatePollingFetch( actionDefinition, ex
       body: JSON.stringify({ ...params, ...existingParams })
     })
       .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) )
-      .then( idxResponse => makeIdxState(idxResponse) );
+      .then( idxResponse => makeIdxState(idxResponse));
   };
 };
 

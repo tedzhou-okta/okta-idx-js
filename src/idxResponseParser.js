@@ -51,7 +51,7 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
 };
 
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
-
+  console.log('in parseIdxResponse--------', idxResponse.remediation.value[0].method);
   const remediations = generateRemediationFunctions( idxResponse.remediation?.value || [] );
   const { context, actions } = parseNonRemediations( idxResponse );
 

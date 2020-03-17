@@ -7,6 +7,7 @@
     "clean": "rimraf dist",
     "build": "yarn build:prod",
     "build:dev": "webpack --mode=development",
+    "build:poc": "webpack --mode=development;cp dist/idx.js* ~/okta/okta-signin-widget/packages/@okta/idx-js/",
     "build:prod": "webpack --mode=production",
     "lint": "eslint src",
     "test:unit": "jest test/unit",
