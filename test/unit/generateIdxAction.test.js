@@ -10,8 +10,6 @@ const { Response } = jest.requireActual('cross-fetch');
 // import targets for mockery
 import fetch from 'cross-fetch'; 
 import makeIdxState from '../../src/makeIdxState';
-fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
-makeIdxState.mockReturnValue('mock IdxState');
 
 describe('generateIdxAction', () => { 
   it('builds a function', () => {
@@ -20,6 +18,8 @@ describe('generateIdxAction', () => {
   });
 
   it('returns a function that returns an idxState', async () => {
+    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    makeIdxState.mockReturnValue('mock IdxState');
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
       .then( result => {
@@ -28,6 +28,28 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( { 
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: { 
+            'content-type': 'application/vnd.okta.v1+json',
+          },
+          method: "POST"
+        });
+        expect( result ).toBe('mock IdxState')
+      });
+  });
+
+  it('returns a function that returns an idxState', async () => {
+    fetch.mockImplementationOnce( () => Promise.resolve( new Response(
+      JSON.stringify( mockIdxResponse ),
+      { status: 401, headers: { 'content-type': 'application/json', 'WWW-Authenticate': 'Oktadevicejwt realm="Okta Device"' } }
+    )));
+    makeIdxState.mockReturnValue('mock IdxState');
+    const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
+    return actionFunction()
+      .catch( result => {
+        expect( fetch.mock.calls.length ).toBe(1);
+        expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
+        expect( fetch.mock.calls[0][1] ).toEqual( {
+          body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          headers: {
             'content-type': 'application/vnd.okta.v1+json',
           },
           method: "POST"
