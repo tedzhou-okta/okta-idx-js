@@ -3,18 +3,18 @@ import { parseIdxResponse } from './idxResponseParser';
 const makeIdxState = function makeIdxState( idxResponse ) {
 
   const { remediations, context, actions } = parseIdxResponse( idxResponse );
-
-  const neededToProceed = {};
-  Object.entries(remediations).forEach( ([name, action]) => {
-    neededToProceed[name] = action.neededParams;
+  const neededToProceed = [];
+  remediations.forEach((remediation) => {
+    neededToProceed.push(remediation);
   });
 
   const proceed = async function( remediationChoice, paramsFromUser = {} ) {
-    if ( !remediations[remediationChoice] ) {
+    const remediationChoiceObject = remediations.find((remediation) => remediation.name === remediationChoice);
+    if ( !remediationChoiceObject ) {
       return Promise.reject(`Unknown remediation choice: [${remediationChoice}]`);
     }
 
-    return remediations[remediationChoice](paramsFromUser);
+    return remediationChoiceObject.action(paramsFromUser);
   };
 
   return {

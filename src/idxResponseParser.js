@@ -51,8 +51,16 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
 };
 
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
+  const remediationData = idxResponse.remediation?.value || [];
+  const remediationActions = generateRemediationFunctions( idxResponse.remediation?.value || [] );
+  const remediations = [];
+  remediationData.forEach((remediation) => {
+    const actionFn = remediationActions[remediation.name];
+    remediation.action = actionFn;
+    remediation.value = remediation.value.filter((item) => item.name !== 'stateHandle');
+    remediations.push(remediation);
+  });
 
-  const remediations = generateRemediationFunctions( idxResponse.remediation?.value || [] );
   const { context, actions } = parseNonRemediations( idxResponse );
 
   return {

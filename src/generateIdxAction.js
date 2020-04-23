@@ -51,7 +51,7 @@ const generateIdxAction = function generateIdxAction( actionDefinition ) {
   const { neededParams, existingParams } = divideActionParamsByAutoStatus( actionDefinition );
 
   const action = generator( actionDefinition, existingParams[actionDefinition.name] );
-  action.neededParams = neededParams[actionDefinition.name];
+  action.neededParams = neededParams;
   return action;
 };
 

@@ -11,7 +11,8 @@
     "lint": "eslint src",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "test": "yarn lint && yarn test:unit"
+    "test": "yarn lint && yarn test:unit",
+    "link-widget":"yarn build:dev && cp -R ./dist/* ~/Desktop/Desktop/okta-signin-widget/packages/@okta/idx-js"
   },
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
