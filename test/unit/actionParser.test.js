@@ -8,10 +8,7 @@ describe('actionParser', () => {
     it('parses and splits multiple remediations', async () => {
       const { neededParams, existingParams } = divideActionParamsByAutoStatus( mockIdxResponse.remediation.value );
 
-      expect( neededParams ).toEqual({
-        identify: [ { name: 'identifier', label: 'Username' } ],
-        'select-enroll-profile': [],
-      });
+      expect( neededParams ).toEqual([[{"label": "Username", "name": "identifier"}], []]);
 
       expect( existingParams ).toEqual({
         identify: {stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw'},
@@ -22,7 +19,7 @@ describe('actionParser', () => {
     it('parses and splits a non-remediation', async () => {
       const { neededParams, existingParams } = divideActionParamsByAutoStatus( mockIdxResponse.cancel);
 
-      expect( neededParams.cancel ).toEqual([]);
+      expect( neededParams ).toEqual([[]]);
       expect( existingParams.cancel ).toEqual({
         stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw',
       });

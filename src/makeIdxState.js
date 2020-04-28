@@ -1,12 +1,10 @@
 import { parseIdxResponse } from './idxResponseParser';
 
 const makeIdxState = function makeIdxState( idxResponse ) {
-
+  const rawIdxResponse =  idxResponse;
   const { remediations, context, actions } = parseIdxResponse( idxResponse );
-  const neededToProceed = [];
-  remediations.forEach((remediation) => {
-    neededToProceed.push(remediation);
-  });
+  const neededToProceed = [...remediations];
+
 
   const proceed = async function( remediationChoice, paramsFromUser = {} ) {
     const remediationChoiceObject = remediations.find((remediation) => remediation.name === remediationChoice);
@@ -22,7 +20,7 @@ const makeIdxState = function makeIdxState( idxResponse ) {
     neededToProceed,
     actions,
     context,
-    rawIdxState: idxResponse,
+    rawIdxState: rawIdxResponse,
   };
 };
 

@@ -11,8 +11,7 @@
     "lint": "eslint src",
     "test:unit": "jest test/unit",
     "test:integration": "jest test/integration",
-    "test": "yarn lint && yarn test:unit",
-    "link-widget":"yarn build:dev && cp -R ./dist/* ~/Desktop/Desktop/okta-signin-widget/packages/@okta/idx-js"
+    "test": "yarn lint && yarn test:unit"
   },
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
@@ -41,6 +40,7 @@
     "regenerator-runtime": "^0.13.3",
     "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "jsonpath": "^1.0.2"
   }
 }

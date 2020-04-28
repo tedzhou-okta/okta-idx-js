@@ -8,19 +8,20 @@ const fieldIsAutoSent = function( field ) {
 const divideSingleActionParams = function divideSingleActionParams( action ) {
   const neededParamsForAction = [];
   const existingParamsForAction = {};
-  // redirect form does not have a value array
-  for ( let field of action.value || [] ) {
+  // not all actions have value (e.g. redirect)
+  // making sure they are not empty and instead hold the remediation object
+  if (!action.value) {
+    neededParamsForAction.push(action);
+    return { neededParamsForAction, existingParamsForAction };
+  }
+
+  for ( let field of action.value ) {
     if ( fieldIsAutoSent( field ) ) {
       existingParamsForAction[field.name] = field.value ?? '';
     } else {
       neededParamsForAction.push(field);
     }
   }
-  // making sure redirect-$.idps.value[*] is not empty and actually holds the remediation object
-  if (!action.value) {
-    neededParamsForAction.push(action);
-  }
-
   return { neededParamsForAction, existingParamsForAction };
 };
 
