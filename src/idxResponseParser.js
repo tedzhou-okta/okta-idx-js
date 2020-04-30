@@ -60,7 +60,10 @@ export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
     remediation.action = actionFn;
     if (remediation.relatesTo) {
       const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
-      remediation.relatesTo = jsonPath.query(idxResponse, query)[0];
+      const result = jsonPath.query(idxResponse, query)[0];
+      if (result) {
+        remediation.relatesTo = result;
+      }
     }
     return remediation;
   };
