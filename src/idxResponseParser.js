@@ -1,5 +1,6 @@
 import { generateRemediationFunctions } from './remediationParser';
 import generateIdxAction from './generateIdxAction';
+import jsonPath from 'jsonpath';
 
 const SKIP_FIELDS = Object.fromEntries([
   'remediation', // remediations are put into proceed/neededToProceed
@@ -51,8 +52,24 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
 };
 
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
+  const remediationData = idxResponse.remediation?.value || [];
 
-  const remediations = generateRemediationFunctions( idxResponse.remediation?.value || [] );
+  const convertRemediationAction = (remediation) => {
+    const remediationActions = generateRemediationFunctions( idxResponse.remediation?.value || [] );
+    const actionFn = remediationActions[remediation.name];
+    remediation.action = actionFn;
+    if (remediation.relatesTo) {
+      const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
+      const result = jsonPath.query(idxResponse, query)[0];
+      if (result) {
+        remediation.relatesTo = result;
+      }
+    }
+    return remediation;
+  };
+
+  const remediations = remediationData.map( convertRemediationAction );
+
   const { context, actions } = parseNonRemediations( idxResponse );
 
   return {

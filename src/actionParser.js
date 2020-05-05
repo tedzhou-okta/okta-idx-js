@@ -8,6 +8,12 @@ const fieldIsAutoSent = function( field ) {
 const divideSingleActionParams = function divideSingleActionParams( action ) {
   const neededParamsForAction = [];
   const existingParamsForAction = {};
+  // not all actions have value (e.g. redirect)
+  // making sure they are not empty and instead hold the remediation object
+  if (!action.value) {
+    neededParamsForAction.push(action);
+    return { neededParamsForAction, existingParamsForAction };
+  }
 
   for ( let field of action.value ) {
     if ( fieldIsAutoSent( field ) ) {
@@ -16,18 +22,17 @@ const divideSingleActionParams = function divideSingleActionParams( action ) {
       neededParamsForAction.push(field);
     }
   }
-
   return { neededParamsForAction, existingParamsForAction };
 };
 
 export const divideActionParamsByAutoStatus = function divideActionParamsByAutoStatus( actionList ) {
   actionList = Array.isArray(actionList) ? actionList : [ actionList ];
-  const neededParams = {};
+  const neededParams = [];
   const existingParams = {};
 
   for ( let action of actionList ) {
     const { neededParamsForAction, existingParamsForAction } = divideSingleActionParams(action);
-    neededParams[action.name] = neededParamsForAction;
+    neededParams.push(neededParamsForAction);
     existingParams[action.name] = existingParamsForAction;
   }
 

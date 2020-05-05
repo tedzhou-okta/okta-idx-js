@@ -103,7 +103,9 @@ describe('idxResponseParser', () => {
       const { remediations } = parseIdxResponse( mockIdxResponse );
       expect( generateRemediationFunctions.mock.calls.length ).toBe(1);
       expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [mockIdxResponse.remediation.value] );
-      expect( remediations ).toBe('generated collection of functions');
+      expect( remediations[0].name ).toBe('challenge-factor');
+      expect( remediations[0].href ).toBe('https://dev-550580.okta.com/idp/idx/challenge/answer');
+      expect( remediations[0].method ).toBe('POST');
     });
 
     it('builds context and actions', () => { 

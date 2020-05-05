@@ -1,11 +1,21 @@
 import { generateRemediationFunctions } from '../../src/remediationParser';
 
-jest.mock('cross-fetch');
-jest.mock('../../src/generateIdxAction');
-
 // imports to target for mockery
 import fetch from 'cross-fetch'; 
 import generateIdxAction from '../../src/generateIdxAction';
+
+jest.mock('cross-fetch');
+/*
+  Doing a jest.mock('../../src/generateIdxAction') has problems with jest.mock causing the test to hang
+  and spikes up the CPU usage for the current node process.
+  Alternative mocking approach: https://jestjs.io/docs/en/es6-class-mocks
+*/
+const mockGenerateIdxAction = jest.fn();
+jest.mock('../../src/generateIdxAction', () => {
+  return jest.fn().mockImplementation(() => {
+    return {generateIdxAction: mockGenerateIdxAction};
+  });
+});
 
 const { Response } = jest.requireActual('cross-fetch');
 const mockRequestIdentity = require('../mocks/request-identifier');

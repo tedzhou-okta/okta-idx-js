@@ -3,13 +3,25 @@ import generateIdxAction from '../../src/generateIdxAction';
 const mockIdxResponse = require('../mocks/request-identifier');
 const mockPollingIdxResponse = require('../mocks/poll-for-password');
 
-jest.mock('cross-fetch');
-jest.mock('../../src/makeIdxState');
 const { Response } = jest.requireActual('cross-fetch');
 
 // import targets for mockery
 import fetch from 'cross-fetch'; 
 import makeIdxState from '../../src/makeIdxState';
+
+jest.mock('cross-fetch');
+/*
+  Doing a jest.mock('../../src/makeIdxState') has problems with jest.mock causing the test to hang
+  and spikes up the CPU usage for the current node process.
+  Alternative mocking approach: https://jestjs.io/docs/en/es6-class-mocks
+*/
+const mockMakeIdxState = jest.fn();
+jest.mock('../../src/makeIdxState', () => {
+  return jest.fn().mockImplementation(() => {
+    return {makeIdxState: mockMakeIdxState};
+  });
+});
+
 
 describe('generateIdxAction', () => { 
   it('builds a function', () => {

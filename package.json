@@ -40,6 +40,7 @@
     "regenerator-runtime": "^0.13.3",
     "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "jsonpath": "^1.0.2"
   }
 }
