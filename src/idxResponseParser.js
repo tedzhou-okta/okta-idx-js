@@ -51,7 +51,7 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
   return { context, actions };
 };
 
-const expandRelateTo = (idxResponse, remediation) => {
+const expandRelatesTo = (idxResponse, remediation) => {
   if (remediation.relatesTo) {
     const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
     const result = jsonPath.query(idxResponse, query)[0];
@@ -73,9 +73,11 @@ const convertRemediationAction = (remediation) => {
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
   const remediationData = idxResponse.remediation?.value || [];
 
-  remediationData.forEach(expandRelateTo.bind({}, idxResponse));
+  remediationData.forEach(
+    remediation => expandRelatesTo(idxResponse, remediation)
+  );
 
-  const remediations = remediationData.map( convertRemediationAction );
+  const remediations = remediationData.map(convertRemediationAction);
 
   const { context, actions } = parseNonRemediations( idxResponse );
 
