@@ -9,7 +9,6 @@ import idx from '../../src/index';
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 const mockRequestIdentity = require('../mocks/request-identifier');
-const mockIdxResponse = mockRequestIdentity;
 const { Response } = jest.requireActual('cross-fetch');
 
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockRequestIdentity )) ) );
@@ -26,7 +25,7 @@ describe('idx-js', () => {
           fail('expected idx.start to reject when not given a stateHandle');
         })
         .catch( err => {
-          expect(err).toMatchObject({ error: 'stateHandle is required'});
+          expect(err).toStrictEqual({ error: 'stateHandle is required'});
         });
     });
 
@@ -36,7 +35,7 @@ describe('idx-js', () => {
           fail('expected idx.start to reject when not given a domain');
         })
         .catch( err => {
-          expect(err).toMatchObject({ error: 'domain is required'});
+          expect(err).toStrictEqual({ error: 'domain is required'});
         });
     });
 
@@ -47,7 +46,7 @@ describe('idx-js', () => {
           expect(idxState.context).toBeDefined();
           expect(typeof idxState.proceed).toBe('function');
           expect(typeof idxState.actions.cancel).toBe('function');
-          expect(idxState.rawIdxState).toMatchObject(mockRequestIdentity);
+          expect(idxState.rawIdxState).toStrictEqual(mockRequestIdentity);
         });
     });
 
