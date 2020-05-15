@@ -1,6 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
+setup_service node v12.13.0
 
 cd ${OKTA_HOME}/${REPO}
 
