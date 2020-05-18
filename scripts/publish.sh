@@ -1,20 +1,12 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
-
-export NVM_DIR="/root/.nvm"
-
-# Install required node version
-setup_service node v12.13.0
-setup_service yarn 1.21.1
 
 source ${OKTA_HOME}/${REPO}/scripts/setup.sh
 
 export TEST_SUITE_TYPE="build"
-export REGISTRY="${ARTIFACTORY_URL}/api/npm/npm-okta"
-
-# Install required dependencies
 export PATH="${PATH}:$(yarn global bin)"
+
 yarn global add @okta/ci-update-package
 yarn global add @okta/ci-pkginfo
 
@@ -31,7 +23,7 @@ if ! ci-update-package --branch ${TARGET_BRANCH}; then
   exit $FAILED_SETUP
 fi
 
-if ! npm publish --registry ${REGISTRY}; then
+if ! npm publish --unsafe-perm; then
   echo "npm publish failed! Exiting..."
   exit ${PUBLISH_ARTIFACTORY_FAILURE}
 fi

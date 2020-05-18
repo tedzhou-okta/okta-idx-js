@@ -51,24 +51,33 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
   return { context, actions };
 };
 
+const expandRelatesTo = (idxResponse, remediation) => {
+  if (remediation.relatesTo) {
+    const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
+    const result = jsonPath.query(idxResponse, query)[0];
+    if (result) {
+      remediation.relatesTo = result;
+    }
+  }
+};
+
+const convertRemediationAction = (remediation) => {
+  const remediationActions = generateRemediationFunctions( [remediation] );
+  const actionFn = remediationActions[remediation.name];
+  return {
+    ...remediation,
+    action: actionFn,
+  };
+};
+
 export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
   const remediationData = idxResponse.remediation?.value || [];
 
-  const convertRemediationAction = (remediation) => {
-    const remediationActions = generateRemediationFunctions( idxResponse.remediation?.value || [] );
-    const actionFn = remediationActions[remediation.name];
-    remediation.action = actionFn;
-    if (remediation.relatesTo) {
-      const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
-      const result = jsonPath.query(idxResponse, query)[0];
-      if (result) {
-        remediation.relatesTo = result;
-      }
-    }
-    return remediation;
-  };
+  remediationData.forEach(
+    remediation => expandRelatesTo(idxResponse, remediation)
+  );
 
-  const remediations = remediationData.map( convertRemediationAction );
+  const remediations = remediationData.map(convertRemediationAction);
 
   const { context, actions } = parseNonRemediations( idxResponse );
 

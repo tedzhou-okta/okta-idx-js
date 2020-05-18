@@ -13,6 +13,7 @@ package-lock.json
 dist
 coverage
 demo
+test-reports
 
 # Ignore TCK-related files in all folders
 okta-oidc-tck*
