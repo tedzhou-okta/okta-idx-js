@@ -5,7 +5,7 @@ Though focused on browser-based interactions, it should also be usable on the se
 
 This library is intended to ease JS-based integration with the Okta Identity Engine (OIE).  This library wraps the sequence of calls to the Okta IDX endpoints so that the consumer doesn't have to parse the entirety of each response, nor manage XHR calls.
 
-Though this library exposes the metadata needed to generate a UI to gather needed data and select between available options, the consumer is responsible for interpeting and aacting on that metadata - idx-js is focused on sending passed data to the appropriate endpoint for the selected actions only.
+Though this library exposes the metadata needed to generate a UI to gather needed data and select between available options, the consumer is responsible for interpeting and acting on that metadata - idx-js is focused on sending passed data to the appropriate endpoint for the selected actions only.
 
 ## Installation
 
