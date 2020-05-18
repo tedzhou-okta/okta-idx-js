@@ -19,8 +19,9 @@ else
   TARGET_BRANCH=${BRANCH}
 fi
 
+# Update package version to include short-sha
 if ! ci-append-sha; then
-  echo "ci-update-package failed! Exiting..."
+  echo "ci-append-sha failed! Exiting..."
   exit $FAILED_SETUP
 fi
 
