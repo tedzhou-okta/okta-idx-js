@@ -13,12 +13,12 @@ jest.mock('../../src/actionParser');
 
 // imports to target for mockery
 import { generateRemediationFunctions } from '../../src/remediationParser';
-import { divideActionParamsByAutoStatus } from '../../src/actionParser';
+import { divideActionParamsByMutability } from '../../src/actionParser';
 import generateIdxAction from '../../src/generateIdxAction';
 
 generateIdxAction.mockReturnValue('generated function');
 generateRemediationFunctions.mockReturnValue('generated collection of functions');
-divideActionParamsByAutoStatus.mockReturnValue( { neededParams: 'neededParams', existingParams: 'existingParams'});
+divideActionParamsByMutability.mockReturnValue( { defaultParams: 'defaultParams', neededParams: 'neededParams', immutableParams: 'immutableParams'});
 
 describe('idxResponseParser', () => {
   describe('parseNonRemediations', () => {

@@ -1,8 +1,8 @@
 import fetch from 'cross-fetch';
-import { divideActionParamsByAutoStatus } from './actionParser';
+import { divideActionParamsByMutability } from './actionParser';
 import makeIdxState from './makeIdxState';
 
-const generateDirectFetch = function generateDirectFetch( actionDefinition, existingParams = {} ) {
+const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {} } ) {
   const target = actionDefinition.href;
   return async function(params) {
     return fetch(target, {
@@ -10,7 +10,7 @@ const generateDirectFetch = function generateDirectFetch( actionDefinition, exis
       headers: {
         'content-type': actionDefinition.accepts,
       },
-      body: JSON.stringify({ ...params, ...existingParams })
+      body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
     })
       .then( response => {
         const respJson = response.json();
@@ -30,7 +30,7 @@ const generateDirectFetch = function generateDirectFetch( actionDefinition, exis
   };
 };
 
-const generatePollingFetch = function generatePollingFetch( actionDefinition, existingParams = {} ) {
+const generatePollingFetch = function generatePollingFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {} } ) {
   // TODO: Discussions ongoing about when/how to terminate polling: OKTA-246581
   const target = actionDefinition.href;
   return async function(params) {
@@ -39,7 +39,7 @@ const generatePollingFetch = function generatePollingFetch( actionDefinition, ex
       headers: {
         'content-type': actionDefinition.accepts,
       },
-      body: JSON.stringify({ ...params, ...existingParams })
+      body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
     })
       .then( response => response.ok ? response.json() : response.json().then( err => Promise.reject(err)) )
       .then( idxResponse => makeIdxState(idxResponse) );
@@ -48,9 +48,13 @@ const generatePollingFetch = function generatePollingFetch( actionDefinition, ex
 
 const generateIdxAction = function generateIdxAction( actionDefinition ) {
   const generator =  actionDefinition.refresh ? generatePollingFetch : generateDirectFetch;
-  const { neededParams, existingParams } = divideActionParamsByAutoStatus( actionDefinition );
+  const { defaultParams, neededParams, immutableParams } = divideActionParamsByMutability( actionDefinition );
 
-  const action = generator( actionDefinition, existingParams[actionDefinition.name] );
+  const action = generator( { 
+    actionDefinition, 
+    defaultParamsForAction: defaultParams[actionDefinition.name], 
+    immutableParamsForAction: immutableParams[actionDefinition.name],
+  });
   action.neededParams = neededParams;
   return action;
 };
