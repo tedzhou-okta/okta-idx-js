@@ -5,6 +5,8 @@ const mockPollingIdxResponse = require('../mocks/poll-for-password');
 
 const { Response } = jest.requireActual('cross-fetch');
 
+const deepClone = ( target ) => JSON.parse(JSON.stringify( target ));
+
 // import targets for mockery
 import fetch from 'cross-fetch'; 
 import makeIdxState from '../../src/makeIdxState';
@@ -56,6 +58,9 @@ describe('generateIdxAction', () => {
     makeIdxState.mockReturnValue('mock IdxState');
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
+      .then( result => { 
+        fail('mock call should have failed', result);
+      })
       .catch( result => {
         expect( fetch.mock.calls.length ).toBe(1);
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
@@ -69,6 +74,79 @@ describe('generateIdxAction', () => {
         expect( result ).toBe('mock IdxState')
       });
   });
+
+  it('sends pre-filled default field values', async () => { 
+    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    makeIdxState.mockReturnValue('mock IdxState');
+
+    const mockRemediationWithValue = deepClone(mockIdxResponse.remediation.value[0]);
+    expect(mockRemediationWithValue.value[0].name).toBe('identifier');
+    mockRemediationWithValue.value[0].value = "A_DEFAULT";
+
+    const actionFunction = generateIdxAction(mockRemediationWithValue);
+    return actionFunction({ })
+      .catch( result => { 
+        fail('mock fetch failed', result);
+      })
+      .then( result => { 
+        expect( fetch.mock.calls[0][1] ).toEqual( { 
+          body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          headers: {
+            'content-type': 'application/vnd.okta.v1+json',
+          },
+          method: "POST"
+        });
+      });
+  });
+
+  it('does not allow overridding immutable fields', async () => { 
+    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    makeIdxState.mockReturnValue('mock IdxState');
+    const mockRemediationWithImmutableValue = deepClone(mockIdxResponse.remediation.value[0]);
+    expect(mockRemediationWithImmutableValue.value[1].name).toBe('stateHandle');
+    expect(mockRemediationWithImmutableValue.value[1].mutable).toBe(false);
+
+    const actionFunction = generateIdxAction(mockRemediationWithImmutableValue);
+    return actionFunction({ stateHandle: 'SHOULD_NOT_CHANGE' })
+      .catch( result => { 
+        fail('mock fetch failed', result);
+      })
+      .then( result => { 
+        expect( fetch.mock.calls[0][1] ).toEqual( { 
+          body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          headers: {
+            'content-type': 'application/vnd.okta.v1+json',
+          },
+          method: "POST"
+        });
+      });
+  });
+
+  it('does allow overridding mutable values', async () => { 
+    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    makeIdxState.mockReturnValue('mock IdxState');
+
+    const mockRemediationWithMutableValue = JSON.parse(JSON.stringify(mockIdxResponse.remediation.value[0]));
+    expect(mockRemediationWithMutableValue.value[0].name).toBe('identifier');
+    expect(mockRemediationWithMutableValue.value[0].mutable).not.toBe(false);
+    mockRemediationWithMutableValue.value[0].value = "SHOULD_CHANGE";
+
+    const actionFunction = generateIdxAction(mockRemediationWithMutableValue);
+    return actionFunction({ identifier: 'WAS_CHANGED' })
+      .catch( result => { 
+        fail('mock fetch failed', result);
+      })
+      .then( result => { 
+        expect( fetch.mock.calls[0][1] ).toEqual( { 
+          body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          headers: {
+            'content-type': 'application/vnd.okta.v1+json',
+          },
+          method: "POST"
+        });
+      });
+  });
+
 
   // TODO: Conditions to decide if polling is finished are being discussed
   xit('generates a polling function when appropriate', () => { 

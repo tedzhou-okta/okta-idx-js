@@ -1,26 +1,32 @@
-import { divideActionParamsByAutoStatus } from '../../src/actionParser';
+import { divideActionParamsByMutability } from '../../src/actionParser';
 
 const mockIdxResponse = require('../mocks/request-identifier');
 
 describe('actionParser', () => { 
-  describe('divideActionsParamsByAutoStatus', () => {
+  describe('divideActionParamsByMutability', () => {
 
     it('parses and splits multiple remediations', async () => {
-      const { neededParams, existingParams } = divideActionParamsByAutoStatus( mockIdxResponse.remediation.value );
+      const { defaultParams, neededParams, immutableParams } = divideActionParamsByMutability( mockIdxResponse.remediation.value );
+
+      expect( defaultParams ).toEqual({
+        identify: {}, 
+        "select-enroll-profile": {},
+      });
 
       expect( neededParams ).toEqual([[{"label": "Username", "name": "identifier"}], []]);
 
-      expect( existingParams ).toEqual({
+      expect( immutableParams ).toEqual({
         identify: {stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw'},
         'select-enroll-profile': {stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw'},
       });
     });
 
     it('parses and splits a non-remediation', async () => {
-      const { neededParams, existingParams } = divideActionParamsByAutoStatus( mockIdxResponse.cancel);
+      const { defaultParams, neededParams, immutableParams } = divideActionParamsByMutability( mockIdxResponse.cancel);
 
+      expect( defaultParams.cancel ).toEqual({});
       expect( neededParams ).toEqual([[]]);
-      expect( existingParams.cancel ).toEqual({
+      expect( immutableParams.cancel ).toEqual({
         stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw',
       });
     });
