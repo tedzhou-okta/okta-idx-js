@@ -1,15 +1,16 @@
-import generateIdxAction from '../../src/generateIdxAction';
+import generateIdxAction from '../../../src/v1/generateIdxAction';
 
-const mockIdxResponse = require('../mocks/request-identifier');
-const mockPollingIdxResponse = require('../mocks/poll-for-password');
+const mockIdxResponse = require('../../mocks/request-identifier');
+const mockPollingIdxResponse = require('../../mocks/poll-for-password');
 
 const { Response } = jest.requireActual('cross-fetch');
 
 const deepClone = ( target ) => JSON.parse(JSON.stringify( target ));
+const mockResponse = ( respondWith ) => Promise.resolve( new Response( JSON.stringify( respondWith) ) );
 
 // import targets for mockery
 import fetch from 'cross-fetch'; 
-import makeIdxState from '../../src/makeIdxState';
+import makeIdxState from '../../../src/v1/makeIdxState';
 
 jest.mock('cross-fetch');
 /*
@@ -18,12 +19,11 @@ jest.mock('cross-fetch');
   Alternative mocking approach: https://jestjs.io/docs/en/es6-class-mocks
 */
 const mockMakeIdxState = jest.fn();
-jest.mock('../../src/makeIdxState', () => {
+jest.mock('../../../src/v1/makeIdxState', () => {
   return jest.fn().mockImplementation(() => {
     return {makeIdxState: mockMakeIdxState};
   });
 });
-
 
 describe('generateIdxAction', () => { 
   it('builds a function', () => {
@@ -32,7 +32,7 @@ describe('generateIdxAction', () => {
   });
 
   it('returns a function that returns an idxState', async () => {
-    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
@@ -42,7 +42,8 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( { 
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: { 
-            'content-type': 'application/vnd.okta.v1+json',
+            'content-type': 'application/json',
+            'accepts': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -50,7 +51,7 @@ describe('generateIdxAction', () => {
       });
   });
 
-  it('returns a function that returns an idxState', async () => {
+  it('handles the status code for Okta device authentication', async () => {
     fetch.mockImplementationOnce( () => Promise.resolve( new Response(
       JSON.stringify( mockIdxResponse ),
       { status: 401, headers: { 'content-type': 'application/json', 'WWW-Authenticate': 'Oktadevicejwt realm="Okta Device"' } }
@@ -67,7 +68,8 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
-            'content-type': 'application/vnd.okta.v1+json',
+            'content-type': 'application/json',
+            'accepts': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -76,7 +78,7 @@ describe('generateIdxAction', () => {
   });
 
   it('sends pre-filled default field values', async () => { 
-    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
 
     const mockRemediationWithValue = deepClone(mockIdxResponse.remediation.value[0]);
@@ -92,7 +94,8 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( { 
           body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
-            'content-type': 'application/vnd.okta.v1+json',
+            'content-type': 'application/json',
+            'accepts': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -100,7 +103,7 @@ describe('generateIdxAction', () => {
   });
 
   it('does not allow overridding immutable fields', async () => { 
-    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
     const mockRemediationWithImmutableValue = deepClone(mockIdxResponse.remediation.value[0]);
     expect(mockRemediationWithImmutableValue.value[1].name).toBe('stateHandle');
@@ -115,7 +118,8 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( { 
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
-            'content-type': 'application/vnd.okta.v1+json',
+            'content-type': 'application/json',
+            'accepts': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -123,7 +127,7 @@ describe('generateIdxAction', () => {
   });
 
   it('does allow overridding mutable values', async () => { 
-    fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+    fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
 
     const mockRemediationWithMutableValue = JSON.parse(JSON.stringify(mockIdxResponse.remediation.value[0]));
@@ -140,7 +144,8 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( { 
           body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
-            'content-type': 'application/vnd.okta.v1+json',
+            'content-type': 'application/json',
+            'accepts': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });

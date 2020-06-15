@@ -1,20 +1,20 @@
-import { parseNonRemediations, parseIdxResponse } from '../../src/idxResponseParser';
+import { parseNonRemediations, parseIdxResponse } from '../../../src/v1/idxResponseParser';
 
-const mockIdxResponse = require('../mocks/challenge-password');
-const mockSmallIdxResponse = require('../mocks/request-identifier');
-const mockComplexContextIdxResponse = require('../mocks/poll-for-password');
-const mockTerminalIdxResponse = require('../mocks/terminal-return-email');
-const mockMessageIdxResponse = require('../mocks/unknown-user');
-const mockSuccessIdxResponse = require('../mocks/success');
+const mockIdxResponse = require('../../mocks/challenge-password');
+const mockSmallIdxResponse = require('../../mocks/request-identifier');
+const mockComplexContextIdxResponse = require('../../mocks/poll-for-password');
+const mockTerminalIdxResponse = require('../../mocks/terminal-return-email');
+const mockMessageIdxResponse = require('../../mocks/unknown-user');
+const mockSuccessIdxResponse = require('../../mocks/success');
 
-jest.mock('../../src/generateIdxAction');
-jest.mock('../../src/remediationParser');
-jest.mock('../../src/actionParser');
+jest.mock('../../../src/v1/generateIdxAction');
+jest.mock('../../../src/v1/remediationParser');
+jest.mock('../../../src/v1/actionParser');
 
 // imports to target for mockery
-import { generateRemediationFunctions } from '../../src/remediationParser';
-import { divideActionParamsByMutability } from '../../src/actionParser';
-import generateIdxAction from '../../src/generateIdxAction';
+import { generateRemediationFunctions } from '../../../src/v1/remediationParser';
+import { divideActionParamsByMutability } from '../../../src/v1/actionParser';
+import generateIdxAction from '../../../src/v1/generateIdxAction';
 
 generateIdxAction.mockReturnValue('generated function');
 generateRemediationFunctions.mockReturnValue('generated collection of functions');

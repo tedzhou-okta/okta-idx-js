@@ -14,7 +14,7 @@
         "name": "identify",
         "href": "https://dev-550580.okta.com/idp/idx/identify",
         "method": "POST",
-        "accepts": "application/vnd.okta.v1+json",
+        "accepts": "application/vnd.okta.v1+json; okta-version=1.0.0",
         "value": [
           {
             "name": "identifier",
@@ -87,7 +87,7 @@
     "name": "cancel",
     "href": "https://dev-550580.okta.com/idp/idx/cancel",
     "method": "POST",
-    "accepts": "application/vnd.okta.v1+json",
+    "accepts": "application/vnd.okta.v1+json; okta-version=1.0.0",
     "value": [
       {
         "name": "stateHandle",
@@ -105,7 +105,7 @@
     "name": "context",
     "href": "https://dev-550580.okta.com/idp/idx/context",
     "method": "POST",
-    "accepts": "application/vnd.okta.v1+json",
+    "accepts": "application/vnd.okta.v1+json; okta-version=1.0.0",
     "value": [
       {
         "name": "stateHandle",

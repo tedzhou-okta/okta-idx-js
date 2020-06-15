@@ -1,8 +1,8 @@
-import { generateRemediationFunctions } from '../../src/remediationParser';
+import { generateRemediationFunctions } from '../../../src/v1/remediationParser';
 
 // imports to target for mockery
 import fetch from 'cross-fetch'; 
-import generateIdxAction from '../../src/generateIdxAction';
+import generateIdxAction from '../../../src/v1/generateIdxAction';
 
 jest.mock('cross-fetch');
 /*
@@ -11,14 +11,14 @@ jest.mock('cross-fetch');
   Alternative mocking approach: https://jestjs.io/docs/en/es6-class-mocks
 */
 const mockGenerateIdxAction = jest.fn();
-jest.mock('../../src/generateIdxAction', () => {
+jest.mock('../../../src/v1/generateIdxAction', () => {
   return jest.fn().mockImplementation(() => {
     return {generateIdxAction: mockGenerateIdxAction};
   });
 });
 
 const { Response } = jest.requireActual('cross-fetch');
-const mockRequestIdentity = require('../mocks/request-identifier');
+const mockRequestIdentity = require('../../mocks/request-identifier');
 const mockIdxResponse = mockRequestIdentity;
 
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockRequestIdentity )) ) );

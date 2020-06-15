@@ -1,7 +1,10 @@
 import introspect from './introspect';
-import makeIdxState from './makeIdxState';
+import parsersForVersion from './parsers';
 
-const start = async function start({ domain, stateHandle }) {
+const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
+
+const start = async function start({ domain, stateHandle, version }) {
+
   if ( !stateHandle ) {
     return Promise.reject({ error: 'stateHandle is required' });
   }
@@ -10,12 +13,23 @@ const start = async function start({ domain, stateHandle }) {
     return Promise.reject({ error: 'domain is required' });
   }
 
-  const idxResponse = await introspect({ domain, stateHandle })
+  if ( !version ) {
+    return Promise.reject({ error: 'version is required' });
+  }
+
+  const idxResponse = await introspect({ domain, stateHandle, version })
     .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
-  const idxState = makeIdxState( idxResponse );
-  return idxState;
+
+  try { 
+    const { makeIdxState } = parsersForVersion(version);
+    const idxState = makeIdxState( idxResponse );
+    return idxState;
+  } catch (error) { 
+    return Promise.reject({ error });
+  }
 };
 
 export default {
   start,
+  LATEST_SUPPORTED_IDX_API_VERSION,
 };
