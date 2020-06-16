@@ -15,12 +15,13 @@ fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mo
 
 const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
+const version = '1.0.0';
 
 describe('idx-js', () => {
   describe('start', () => {
 
     it('rejects without a stateHandle', async () => {
-      return idx.start({ domain })
+      return idx.start({ domain, version })
         .then( () => {
           fail('expected idx.start to reject when not given a stateHandle');
         })
@@ -30,7 +31,7 @@ describe('idx-js', () => {
     });
 
     it('rejects without a domain', async () => {
-      return idx.start({ stateHandle })
+      return idx.start({ stateHandle, version })
         .then( () => {
           fail('expected idx.start to reject when not given a domain');
         })
@@ -39,8 +40,18 @@ describe('idx-js', () => {
         });
     });
 
+    it('rejects without a version', async () => {
+      return idx.start({ stateHandle, domain })
+        .then( () => {
+          fail('expected idx.start to reject when not given a version');
+        })
+        .catch( err => {
+          expect(err).toStrictEqual({ error: 'version is required'});
+        });
+    });
+
     it('returns an idxState', async () => {
-      return idx.start({ domain, stateHandle })
+      return idx.start({ domain, stateHandle, version })
         .then( idxState => {
           expect(idxState).toBeDefined();
           expect(idxState.context).toBeDefined();

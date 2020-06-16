@@ -1,6 +1,6 @@
-import makeIdxState from '../../src/makeIdxState';
-const mockIdxResponse = require('../mocks/request-identifier');
-const mockIdxResponseWithIdps = require('../mocks/request-identifier-with-idps');
+import makeIdxState from '../../../src/v1/makeIdxState';
+const mockIdxResponse = require('../../mocks/request-identifier');
+const mockIdxResponseWithIdps = require('../../mocks/request-identifier-with-idps');
 
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery

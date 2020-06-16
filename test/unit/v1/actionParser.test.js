@@ -1,6 +1,6 @@
-import { divideActionParamsByMutability } from '../../src/actionParser';
+import { divideActionParamsByMutability } from '../../../src/v1/actionParser';
 
-const mockIdxResponse = require('../mocks/request-identifier');
+const mockIdxResponse = require('../../mocks/request-identifier');
 
 describe('actionParser', () => { 
   describe('divideActionParamsByMutability', () => {
