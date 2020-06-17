@@ -4,6 +4,7 @@ import makeIdxState from './makeIdxState';
 
 const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {} } ) {
   const target = actionDefinition.href;
+  let responseMeta; 
   return async function(params) {
     return fetch(target, {
       method: actionDefinition.method,
@@ -13,21 +14,17 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
       },
       body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
     })
-      .then( response => {
-        const respJson = response.json();
-        if (response.ok) {
-          return respJson;
-        } else if (response.status === 401 && response.headers.get('WWW-Authenticate') === 'Oktadevicejwt realm="Okta Device"') {
-          // Okta server responds 401 status code with WWW-Authenticate header and new remediation
-          // so that the iOS/MacOS credential SSO extension (Okta Verify) can intercept
-          // the response reaches here when Okta Verify is not installed
-          // we need to return an idx object so that
-          // the SIW can proceed to the next step without showing error
-          return respJson.then(err => Promise.reject(makeIdxState(err)) );
-        }
-        return respJson.then(err => Promise.reject(err));
+      .then( response => { 
+        responseMeta = response;
+        return response.json();
       })
-      .then( idxResponse => makeIdxState(idxResponse) );
+      .then( parsedResponse => { 
+        try { 
+          return makeIdxState(parsedResponse, responseMeta);
+        } catch { 
+          return Promise.reject(parsedResponse); 
+        }
+      });
   };
 };
 

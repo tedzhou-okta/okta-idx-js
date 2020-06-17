@@ -51,29 +51,16 @@ describe('generateIdxAction', () => {
       });
   });
 
-  it('handles the status code for Okta device authentication', async () => {
+  it('passes idxResponse to makeIdxState even on an http error', async () => { 
     fetch.mockImplementationOnce( () => Promise.resolve( new Response(
-      JSON.stringify( mockIdxResponse ),
-      { status: 401, headers: { 'content-type': 'application/json', 'WWW-Authenticate': 'Oktadevicejwt realm="Okta Device"' } }
+      JSON.stringify( {'this is': 'not an idx response'} ),
+      { status: 500, headers: { 'content-type': 'application/json' } }
     )));
-    makeIdxState.mockReturnValue('mock IdxState');
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
-      .then( result => { 
-        fail('mock call should have failed', result);
-      })
-      .catch( result => {
-        expect( fetch.mock.calls.length ).toBe(1);
-        expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
-        expect( fetch.mock.calls[0][1] ).toEqual( {
-          body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
-          headers: {
-            'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
-          },
-          method: "POST"
-        });
-        expect( result ).toBe('mock IdxState')
+      .then( () => { 
+        expect(makeIdxState.mock.calls.length).toBe(1);
+        expect(makeIdxState.mock.calls[0][0]).toEqual({'this is': 'not an idx response'});
       });
   });
 

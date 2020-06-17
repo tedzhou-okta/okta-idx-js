@@ -111,6 +111,10 @@ The less-than-happy paths include these options:
 
 `rawIdxResponse` is an object containing the raw Ion response.  It is included to cover the uncommon cases that idx-js doesn't serve well, but the goal is to minimize the need and use of it, as any useful information should be more easily obtained in `.neededToProceed`, `.actions`, or `.context`.
 
+#### idxState.responseMeta
+
+`responseMeta` is an object containing the base response metadata, such as the http status code and any headers.  It is included so that any conditional responses for this data (such as authenticator-based error responses) can be checked.  
+
 ## Contributing
 
 ### Running tests

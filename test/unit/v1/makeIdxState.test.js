@@ -20,6 +20,11 @@ describe('makeIdxState', () => {
     expect(idxState.rawIdxState).toEqual(mockIdxResponse);
   });
 
+  it('rejects if it is not given an idxResponse', () => { 
+    expect( () => makeIdxState({ example: 'of a non IDX Response' }) ).toThrow('response was not an idxResponse');
+  });
+
+
   it('populates neededToProceed with Ion data', () => {
     setFetchMock(mockIdxResponse);
     const idxState = makeIdxState( mockIdxResponse );
