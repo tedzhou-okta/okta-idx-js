@@ -54,9 +54,9 @@ const generateIdxAction = function generateIdxAction( actionDefinition ) {
   const generator = generateDirectFetch;
   const { defaultParams, neededParams, immutableParams } = divideActionParamsByMutability( actionDefinition );
 
-  const action = generator( { 
-    actionDefinition, 
-    defaultParamsForAction: defaultParams[actionDefinition.name], 
+  const action = generator( {
+    actionDefinition,
+    defaultParamsForAction: defaultParams[actionDefinition.name],
     immutableParamsForAction: immutableParams[actionDefinition.name],
   });
   action.neededParams = neededParams;

@@ -9,7 +9,7 @@ const parsersForVersion = function parsersForVersion( version ) {
       return v1;
     case undefined:
     case null:
-      throw new Error(`Api version is required`);
+      throw new Error('Api version is required');
     default:
       throw new Error(`Unknown api version: ${version}.  Use an exact semver version.`);
   }

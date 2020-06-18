@@ -18,13 +18,13 @@ const start = async function start({ domain, stateHandle, version }) {
   }
 
 
-  try { 
+  try {
     const { makeIdxState } = parsersForVersion(version);
     const idxResponse = await introspect({ domain, stateHandle, version })
       .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
     const idxState = makeIdxState( idxResponse );
     return idxState;
-  } catch (error) { 
+  } catch (error) {
     return Promise.reject({ error });
   }
 };
