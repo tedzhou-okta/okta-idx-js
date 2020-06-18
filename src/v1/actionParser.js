@@ -1,4 +1,4 @@
-const isFieldMutable = function isFieldMutable (field) { 
+const isFieldMutable = function isFieldMutable(field) {
   // mutable defaults to true, annoyingly
   return ( field.mutable !== false );
 };
@@ -17,11 +17,11 @@ const divideSingleActionParamsByMutability = function divideSingleActionParamsBy
 
   for ( let field of action.value ) {
 
-    if ( isFieldMutable( field ) ) { 
+    if ( isFieldMutable( field ) ) {
 
       neededParamsForAction.push(field);
 
-      if( (field.value ?? false) ) { 
+      if ( field.value ?? false ) {
         defaultParamsForAction[field.name] = field.value;
       }
 

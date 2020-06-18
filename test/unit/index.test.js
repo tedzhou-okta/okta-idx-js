@@ -46,7 +46,19 @@ describe('idx-js', () => {
           fail('expected idx.start to reject when not given a version');
         })
         .catch( err => {
+          expect(fetch).not.toHaveBeenCalled();
           expect(err).toStrictEqual({ error: 'version is required'});
+        });
+    });
+
+    it('does not call introspect with a well formed but bad version', async () => {
+      return idx.start({ stateHandle, domain, version: '999999.9999.9999' })
+        .then( () => {
+          fail('expected idx.start to reject when not given a wrong version');
+        })
+        .catch( err => { 
+          expect( err ).toEqual( { error: new Error('Unknown api version: 999999.9999.9999.  Use an exact semver version.') });
+          expect( fetch ).not.toHaveBeenCalled();
         });
     });
 
