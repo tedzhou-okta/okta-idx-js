@@ -51,14 +51,18 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
   return { context, actions };
 };
 
-const expandRelatesTo = (idxResponse, remediation) => {
-  if (remediation.relatesTo) {
-    const query = Array.isArray(remediation.relatesTo) ? remediation.relatesTo[0] : remediation.relatesTo;
-    const result = jsonPath.query(idxResponse, query)[0];
-    if (result) {
-      remediation.relatesTo = result;
+const expandRelatesTo = (idxResponse, value) => {
+  Object.keys(value).forEach(k => {
+    if (k === 'relatesTo' && typeof value[k] === 'string') {
+      const query = Array.isArray(value[k]) ? value[k][0] : value[k];
+      const result = jsonPath.query(idxResponse, query)[0];
+      if (result) {
+        value[k] = result;
+      }
+    } else if (Array.isArray(value[k])) {
+      value[k].forEach(innerValue => expandRelatesTo(idxResponse, innerValue));
     }
-  }
+  });
 };
 
 const convertRemediationAction = (remediation) => {

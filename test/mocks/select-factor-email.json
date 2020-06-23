@@ -70,23 +70,5 @@
         "mutable": false
       }
     ]
-  },
-  "context": {
-    "rel": [
-      "create-form"
-    ],
-    "name": "context",
-    "href": "https://dev-550580.okta.com/idp/idx/context",
-    "method": "POST",
-    "accepts": "application/vnd.okta.v1+json",
-    "value": [
-      {
-        "name": "stateHandle",
-        "required": true,
-        "value": "02XK6MwQm7S4ajhvjKZGBSQBdp-SdtywmrSdEmadmU",
-        "visible": false,
-        "mutable": false
-      }
-    ]
   }
 }

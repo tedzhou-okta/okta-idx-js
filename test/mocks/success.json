@@ -26,22 +26,6 @@
       }
     ]
   },
-  "context": {
-    "rel": [
-      "create-form"
-    ],
-    "name": "context",
-    "href": "http://localhost:3000/idp/idx/context",
-    "method": "POST",
-    "accepts": "application/vnd.okta.v1+json",
-    "value": [
-      {
-        "name": "stateHandle",
-        "value": "022FJBvS6bHS7OjQSOhtfghhJvO2a2TELaMZ94s69K",
-        "visible": false
-      }
-    ]
-  },
   "success": {
     "name": "success-redirect",
     "href": "https://httpbin.org?stateToken=abc123"
