@@ -1,6 +1,8 @@
 import { parseNonRemediations, parseIdxResponse } from '../../../src/v1/idxResponseParser';
 
 const mockIdxResponse = require('../../mocks/challenge-password');
+const mockAuthenticatorVerificationSelectAuthenticator = require('../../mocks/authenticator-verification-select-authenticator');
+const mockAuthenticatorVerificationPassword= require('../../mocks/authenticator-verification-password');
 const mockSmallIdxResponse = require('../../mocks/request-identifier');
 const mockComplexContextIdxResponse = require('../../mocks/poll-for-password');
 const mockTerminalIdxResponse = require('../../mocks/terminal-return-email');
@@ -130,6 +132,21 @@ describe('idxResponseParser', () => {
         version: mockIdxResponse.version,
       });
       expect( actions.cancel ).toBe('generated function');
+    });
+
+    it('builds remediation for authenticator-verify-select-authenticator', () => {
+      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationSelectAuthenticator );
+      expect( generateRemediationFunctions.mock.calls.length ).toBe(1);
+      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ mockAuthenticatorVerificationSelectAuthenticator.remediation.value ] );
+      expect( remediations[0] ).toMatchSnapshot();
+    });
+
+    it('builds remediation functions for authenticator-verify-password', () => {
+      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationPassword );
+      expect( generateRemediationFunctions.mock.calls.length ).toBe(2);
+      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[0]] ] );
+      expect( generateRemediationFunctions.mock.calls[1] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[1]] ] );
+      expect( remediations[0]).toMatchSnapshot();
     });
 
   });
