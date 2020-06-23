@@ -53,13 +53,17 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
 
 const expandRelatesTo = (idxResponse, value) => {
   Object.keys(value).forEach(k => {
-    if (k === 'relatesTo' && typeof value[k] === 'string') {
+    if (k === 'relatesTo') {
       const query = Array.isArray(value[k]) ? value[k][0] : value[k];
-      const result = jsonPath.query(idxResponse, query)[0];
-      if (result) {
-        value[k] = result;
+      if (typeof query === 'string') {
+        const result = jsonPath.query(idxResponse, query)[0];
+        if (result) {
+          value[k] = result;
+          return;
+        }
       }
-    } else if (Array.isArray(value[k])) {
+    }
+    if (Array.isArray(value[k])) {
       value[k].forEach(innerValue => expandRelatesTo(idxResponse, innerValue));
     }
   });
