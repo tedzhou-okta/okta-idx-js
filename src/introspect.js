@@ -9,8 +9,8 @@ const introspect = async function introspect({ domain, stateHandle, version }) {
   return fetch(target, {
     method: 'POST',
     headers: {
-      'content-type': 'application/json',
-      accepts: `application/ion+json; okta-version=${version}`,
+      'content-type': `application/ion+json; okta-version=${version}`, // Server wants this version info
+      accept: `application/ion+json; okta-version=${version}`,
     },
     body: JSON.stringify({ stateToken: stateHandle })
   })
