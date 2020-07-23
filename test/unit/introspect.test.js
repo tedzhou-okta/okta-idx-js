@@ -46,8 +46,8 @@ describe('introspect', () => {
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateToken":"FAKEY-FAKE"}',
           headers: {
-            'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'content-type': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
