@@ -34,7 +34,7 @@ import idx from `@okta/okta-idx-js`;
 The config object params:
 - **domain**: (required) The protocol+domain (but no path!) of the Okta issuer domain
 - **stateHandle**: (required TODO: Until Bootstrap) The current stateHandle string
-- **versione**: (required) The server version of the IDX api. (Example: "1.0.0")  You should manually specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
+- **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You should manually specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
 
 `idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the `stateHandle`
 
