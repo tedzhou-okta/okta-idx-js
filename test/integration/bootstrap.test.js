@@ -15,12 +15,13 @@ beforeEach( async () => {
   config.redirectUri = process.env.REDIRECT_URI;
   config.userIdentifier = process.env.USER_IDENTIFIER;
   config.version = '1.0.0';
-  config.scope = 'openid email';
+  config.scope = ['openid', 'email'];
 });
 
 describe('idx-js bootstrap', () => {
   it('returns an idxState on start()', async () => {
-    return idx.start({ clientId: config.clientId, version: config.version, domain: config.issuerUrl, scope: config.scope })
+    return idx.start({ clientId: config.clientId, version: config.version, issuer: config.issuerUrl, scopes: config.scopes })
+      .catch( e => console.warn('x',e))
       .then( idxState => {
         expect(idxState).toBeDefined();
         expect(idxState.rawIdxState).toBeDefined();

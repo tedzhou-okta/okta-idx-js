@@ -1,10 +1,10 @@
 import fetch from 'cross-fetch';
 
-const bootstrap = async function bootstrap({ clientId, domain, scopes = ['openid profile'] }) {
+const bootstrap = async function bootstrap({ clientId, issuer, scopes = ['openid profile'] }) {
   // FIXME: default scope
   const scope = scopes.join(' ');
 
-  const target = `${domain}/oauth2/default/v1/interact`; // FIXME: We should pass issuer instead of domain, and pull domain out for idx endpoints
+  const target = `${issuer}/v1/interact`; // FIXME: We should pass issuer instead of domain, and pull domain out for idx endpoints
   return fetch(target, {
     method: 'POST',
     headers: {

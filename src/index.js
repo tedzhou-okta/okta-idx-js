@@ -4,11 +4,15 @@ import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
-const start = async function start({ clientId, domain, stateHandle, version, scopes }) {
+const start = async function start({ clientId, domain, issuer, stateHandle, version, scopes }) {
   let interactionHandle;
 
-  if ( !domain ) {
-    return Promise.reject({ error: 'domain is required' });
+  if ( !domain && !issuer) {
+    return Promise.reject({ error: 'issuer is required' });
+  }
+
+  if ( !domain ) { 
+    domain = new URL(issuer).origin;
   }
 
   if ( !version ) {
@@ -26,7 +30,7 @@ const start = async function start({ clientId, domain, stateHandle, version, sco
 
   if ( !stateHandle ) {
     try {
-      const { interaction_handle } = await bootstrap({ clientId, domain, version, scope });
+      const interaction_handle = await bootstrap({ clientId, issuer, version, scopes });
       interactionHandle = interaction_handle;
     } catch (error) {
       return Promise.reject({ error });

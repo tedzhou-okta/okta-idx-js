@@ -46,7 +46,7 @@ describe('idx-js', () => {
           fail('expected idx.start to reject when not given a domain');
         })
         .catch( err => {
-          expect(err).toStrictEqual({ error: 'domain is required'});
+          expect(err).toStrictEqual({ error: 'issuer is required'});
         });
     });
 
