@@ -1,4 +1,4 @@
-import idx from '../../src/index';
+import idx from '../../../src/index';
 //  We must import before webpack to be able to mock
 //  Integration tests will run against webpacked code
 
@@ -8,7 +8,7 @@ import idx from '../../src/index';
 
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
-const mockRequestIdentity = require('../mocks/request-identifier');
+const mockRequestIdentity = require('../../mocks/legacy/request-identifier');
 const { Response } = jest.requireActual('cross-fetch');
 
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockRequestIdentity )) ) );
@@ -19,16 +19,6 @@ const version = '1.0.0';
 
 describe('idx-js', () => {
   describe('start', () => {
-
-    it('requires a clientId when there is no stateHandle', async () => { 
-      return idx.start({ domain, version })
-        .then( () => { 
-          fail('expected idx.start to reject without one of: clientId, stateHandle');
-        })
-        .catch( err => { 
-          expect(err).toStrictEqual({ error: 'clientId is required when there is no stateHandle' });
-        });
-    });
 
     xit('rejects without a stateHandle', async () => {
       return idx.start({ domain, version })

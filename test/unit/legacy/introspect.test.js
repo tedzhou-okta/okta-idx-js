@@ -1,10 +1,10 @@
-import introspect from '../../src/introspect';
+import introspect from '../../../src/introspect';
 
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 
-const mockIdxResponse = require('../mocks/request-identifier');
-const mockErrorResponse = require('../mocks/error-response');
+const mockIdxResponse = require('../../mocks/legacy/request-identifier');
+const mockErrorResponse = require('../../mocks/legacy/error-response');
 const { Response } = jest.requireActual('cross-fetch');
 
 let domain = 'http://okta.example.com';
@@ -53,5 +53,6 @@ describe('introspect', () => {
         });
       });
   });
+
 
 });
