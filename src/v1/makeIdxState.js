@@ -1,10 +1,9 @@
 import { parseIdxResponse } from './idxResponseParser';
 
-const makeIdxState = function makeIdxState( idxResponse ) {
+const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
   const rawIdxResponse =  idxResponse;
-  const { remediations, context, actions } = parseIdxResponse( idxResponse );
+  const { remediations, context, actions } = parseIdxResponse( idxResponse, toPersist );
   const neededToProceed = [...remediations];
-
 
   const proceed = async function( remediationChoice, paramsFromUser = {} ) {
     /*
@@ -21,12 +20,22 @@ const makeIdxState = function makeIdxState( idxResponse ) {
     return remediationChoiceObject.action(paramsFromUser);
   };
 
+  const hasInteractionCode = function hasInteractionCode() {
+    return !!rawIdxResponse.successWithInteractionCode;
+  };
+
+  const findCode = item => item.name === 'interaction_code';
+  const interactionCode = rawIdxResponse.successWithInteractionCode?.value.find( findCode ).value;
+
   return {
     proceed,
     neededToProceed,
     actions,
     context,
     rawIdxState: rawIdxResponse,
+    hasInteractionCode,
+    interactionCode,
+    toPersist,
   };
 };
 

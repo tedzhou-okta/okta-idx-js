@@ -1,15 +1,17 @@
 import fetch from 'cross-fetch';
 import { divideActionParamsByMutability } from './actionParser';
+import { userAgentHeaders } from '../userAgent';
 import makeIdxState from './makeIdxState';
 
-const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {} } ) {
+const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {}, toPersist } ) {
   const target = actionDefinition.href;
   return async function(params) {
     return fetch(target, {
       method: actionDefinition.method,
       headers: {
+        ...userAgentHeaders(),
         'content-type': 'application/json',
-        'accepts': actionDefinition.accepts || 'application/ion+json',
+        'accept': actionDefinition.accepts || 'application/ion+json',
       },
       body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
     })
@@ -23,11 +25,11 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
           // the response reaches here when Okta Verify is not installed
           // we need to return an idx object so that
           // the SIW can proceed to the next step without showing error
-          return respJson.then(err => Promise.reject(makeIdxState(err)) );
+          return respJson.then(err => Promise.reject(makeIdxState(err, toPersist)) );
         }
         return respJson.then(err => Promise.reject(err));
       })
-      .then( idxResponse => makeIdxState(idxResponse) );
+      .then( idxResponse => makeIdxState(idxResponse, toPersist) );
   };
 };
 
@@ -48,7 +50,7 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
 //   };
 // };
 
-const generateIdxAction = function generateIdxAction( actionDefinition ) {
+const generateIdxAction = function generateIdxAction( actionDefinition, toPersist ) {
   // TODO: leaving this here to see where the polling is EXPECTED to drop into the code, but removing any accidental trigger of incomplete code
   // const generator =  actionDefinition.refresh ? generatePollingFetch : generateDirectFetch;
   const generator = generateDirectFetch;
@@ -58,6 +60,7 @@ const generateIdxAction = function generateIdxAction( actionDefinition ) {
     actionDefinition,
     defaultParamsForAction: defaultParams[actionDefinition.name],
     immutableParamsForAction: immutableParams[actionDefinition.name],
+    toPersist
   });
   action.neededParams = neededParams;
   return action;
