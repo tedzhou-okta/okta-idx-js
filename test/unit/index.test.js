@@ -16,6 +16,7 @@ fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mo
 const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
 const version = '1.0.0';
+const clientId = 'CLIENT_ID';
 
 describe('idx-js', () => {
   describe('start', () => {
@@ -26,7 +27,17 @@ describe('idx-js', () => {
           fail('expected idx.start to reject without one of: clientId, stateHandle');
         })
         .catch( err => { 
-          expect(err).toStrictEqual({ error: 'clientId is required when there is no stateHandle' });
+          expect(err).toStrictEqual({ error: 'clientId is required' });
+        });
+    });
+
+    it('requires a redirectUri when there is no stateHandle', async () => { 
+      return idx.start({ domain, clientId, version })
+        .then( () => { 
+          fail('expected idx.start to reject without one of: redirectUri, stateHandle');
+        })
+        .catch( err => { 
+          expect(err).toStrictEqual({ error: 'redirectUri is required' });
         });
     });
 

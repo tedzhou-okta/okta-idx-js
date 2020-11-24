@@ -4,11 +4,19 @@ import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
-const start = async function start({ clientId, domain, issuer, stateHandle, version, scopes }) {
+const start = async function start({ clientId, domain, issuer, stateHandle, version, redirectUri, state, scopes }) {
   let interactionHandle;
 
   if ( !domain && !issuer) {
     return Promise.reject({ error: 'issuer is required' });
+  }
+
+  if ( !stateHandle && !clientId ) { // redirectUri is only required on self-hosted flow
+    return Promise.reject({ error: 'clientId is required' });
+  }
+
+  if ( !stateHandle && !redirectUri ) { // redirectUri is only required on self-hosted flow
+    return Promise.reject({ error: 'redirectUri is required' });
   }
 
   if ( !domain ) { 
@@ -22,10 +30,6 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
   const cleanVersion = (version ?? '').replace(/[^0-9a-zA-Z._-]/, '');
   if ( cleanVersion !== version || !version ) {
     return Promise.reject({ error: 'invalid version supplied - version is required and uses semver syntax'});
-  }
-
-  if ( !stateHandle && !clientId ) {
-    return Promise.reject({ error: 'clientId is required when there is no stateHandle' });
   }
 
   if ( !stateHandle ) {
