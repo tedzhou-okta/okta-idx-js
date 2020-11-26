@@ -7,7 +7,7 @@ const SKIP_FIELDS = Object.fromEntries([
   'context', // the API response of 'context' isn't externally useful.  We ignore it and put all non-action (contextual) info into idxState.context
 ].map( (field) => [ field, !!'skip this field' ] ));
 
-export const parseNonRemediations = function parseNonRemediations( idxResponse ) {
+export const parseNonRemediations = function parseNonRemediations( idxResponse, toPersist={} ) {
   const actions = {};
   const context = {};
 
@@ -24,7 +24,7 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
 
       if ( idxResponse[field].rel ) {
         // top level actions
-        actions[idxResponse[field].name] = generateIdxAction(idxResponse[field]);
+        actions[idxResponse[field].name] = generateIdxAction(idxResponse[field], toPersist);
         return;
       }
 
@@ -43,7 +43,7 @@ export const parseNonRemediations = function parseNonRemediations( idxResponse )
         .forEach( ([subField, value]) => {
           if (value.rel) { // is [field].value[subField] an action?
             // add any "action" value subfields to actions
-            actions[`${field}-${subField.name || subField}`] = generateIdxAction(value);
+            actions[`${field}-${subField.name || subField}`] = generateIdxAction(value, toPersist);
           } else {
             // add non-action value subfields to context
             context[field].value[subField] = value;
@@ -72,8 +72,8 @@ const expandRelatesTo = (idxResponse, value) => {
   });
 };
 
-const convertRemediationAction = (remediation) => {
-  const remediationActions = generateRemediationFunctions( [remediation] );
+const convertRemediationAction = (remediation, toPersist) => {
+  const remediationActions = generateRemediationFunctions( [remediation], toPersist );
   const actionFn = remediationActions[remediation.name];
   return {
     ...remediation,
@@ -81,16 +81,16 @@ const convertRemediationAction = (remediation) => {
   };
 };
 
-export const parseIdxResponse = function parseIdxResponse( idxResponse ) {
+export const parseIdxResponse = function parseIdxResponse( idxResponse, toPersist={} ) {
   const remediationData = idxResponse.remediation?.value || [];
 
   remediationData.forEach(
     remediation => expandRelatesTo(idxResponse, remediation)
   );
 
-  const remediations = remediationData.map(convertRemediationAction);
+  const remediations = remediationData.map(remediation => convertRemediationAction( remediation, toPersist ));
 
-  const { context, actions } = parseNonRemediations( idxResponse );
+  const { context, actions } = parseNonRemediations( idxResponse, toPersist );
 
   return {
     remediations,

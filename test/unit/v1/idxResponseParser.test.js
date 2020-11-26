@@ -107,7 +107,7 @@ describe('idxResponseParser', () => {
     it('builds remediation functions', () => {
       const { remediations } = parseIdxResponse( mockIdxResponse );
       expect( generateRemediationFunctions.mock.calls.length ).toBe(1);
-      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [mockIdxResponse.remediation.value] );
+      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [mockIdxResponse.remediation.value, {}] );
       expect( remediations[0].name ).toBe('challenge-factor');
       expect( remediations[0].href ).toBe('https://dev-550580.okta.com/idp/idx/challenge/answer');
       expect( remediations[0].method ).toBe('POST');
@@ -135,17 +135,19 @@ describe('idxResponseParser', () => {
     });
 
     it('builds remediation for authenticator-verify-select-authenticator', () => {
-      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationSelectAuthenticator );
+      const toPersist = {};
+      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationSelectAuthenticator, toPersist );
       expect( generateRemediationFunctions.mock.calls.length ).toBe(1);
-      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ mockAuthenticatorVerificationSelectAuthenticator.remediation.value ] );
+      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ mockAuthenticatorVerificationSelectAuthenticator.remediation.value, toPersist ] );
       expect( remediations[0] ).toMatchSnapshot();
     });
 
     it('builds remediation functions for authenticator-verify-password', () => {
-      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationPassword );
+      const toPersist = {};
+      const { remediations } = parseIdxResponse( mockAuthenticatorVerificationPassword, toPersist );
       expect( generateRemediationFunctions.mock.calls.length ).toBe(2);
-      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[0]] ] );
-      expect( generateRemediationFunctions.mock.calls[1] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[1]] ] );
+      expect( generateRemediationFunctions.mock.calls[0] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[0]], toPersist ] );
+      expect( generateRemediationFunctions.mock.calls[1] ).toMatchObject( [ [mockAuthenticatorVerificationPassword.remediation.value[1]], toPersist ] );
       expect( remediations[0]).toMatchSnapshot();
     });
 

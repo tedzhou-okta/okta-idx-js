@@ -1,11 +1,13 @@
 import introspect from './introspect';
 import bootstrap from './bootstrap';
+import pkce from './pkce';
 import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
 const start = async function start({ clientId, domain, issuer, stateHandle, version, redirectUri, state, scopes }) {
   let interactionHandle;
+  const toPersist = {};
 
   if ( !domain && !issuer) {
     return Promise.reject({ error: 'issuer is required' });
@@ -34,8 +36,13 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
 
   if ( !stateHandle ) {
     try {
-      const interaction_handle = await bootstrap({ clientId, issuer, version, scopes });
+      const { codeChallenge, codeVerifier } = pkce.makeCodePair();
+      toPersist.codeChallenge = codeChallenge;
+      toPersist.codeVerifier = codeVerifier;
+
+      const interaction_handle = await bootstrap({ clientId, issuer, scopes, redirectUri, codeChallenge, state });
       interactionHandle = interaction_handle;
+      toPersist.interactionHandle = interactionHandle;
     } catch (error) {
       return Promise.reject({ error });
     }
@@ -45,7 +52,7 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
     const { makeIdxState } = parsersForVersion(version);
     const idxResponse = await introspect({ domain, interactionHandle, stateHandle, version })
       .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
-    const idxState = makeIdxState( idxResponse );
+    const idxState = makeIdxState( idxResponse, toPersist );
     return idxState;
   } catch (error) {
     return Promise.reject({ error });

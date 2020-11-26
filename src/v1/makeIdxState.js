@@ -1,8 +1,8 @@
 import { parseIdxResponse } from './idxResponseParser';
 
-const makeIdxState = function makeIdxState( idxResponse ) {
+const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
   const rawIdxResponse =  idxResponse;
-  const { remediations, context, actions } = parseIdxResponse( idxResponse );
+  const { remediations, context, actions } = parseIdxResponse( idxResponse, toPersist );
   const neededToProceed = [...remediations];
 
 
@@ -21,12 +21,24 @@ const makeIdxState = function makeIdxState( idxResponse ) {
     return remediationChoiceObject.action(paramsFromUser);
   };
 
+  const hasInteractionCode = function hasInteractionCode() { 
+    return !!rawIdxResponse.successWithInteractionCode;
+  };
+
+  const exchangeCode = async function exchangeCode() { 
+    // FIXME - generate action from successWithInteractionCode, include PKCE
+    return {}; // Will be tokens
+  };
+
   return {
     proceed,
     neededToProceed,
     actions,
     context,
     rawIdxState: rawIdxResponse,
+    hasInteractionCode,
+    ...hasInteractionCode() ? { exchangeCode } : {},
+    toPersist
   };
 };
 
