@@ -7,7 +7,7 @@ const SKIP_FIELDS = Object.fromEntries([
   'context', // the API response of 'context' isn't externally useful.  We ignore it and put all non-action (contextual) info into idxState.context
 ].map( (field) => [ field, !!'skip this field' ] ));
 
-export const parseNonRemediations = function parseNonRemediations( idxResponse, toPersist={} ) {
+export const parseNonRemediations = function parseNonRemediations( idxResponse, toPersist = {} ) {
   const actions = {};
   const context = {};
 
@@ -81,7 +81,7 @@ const convertRemediationAction = (remediation, toPersist) => {
   };
 };
 
-export const parseIdxResponse = function parseIdxResponse( idxResponse, toPersist={} ) {
+export const parseIdxResponse = function parseIdxResponse( idxResponse, toPersist = {} ) {
   const remediationData = idxResponse.remediation?.value || [];
 
   remediationData.forEach(

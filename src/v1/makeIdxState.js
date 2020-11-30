@@ -1,10 +1,10 @@
 import { parseIdxResponse } from './idxResponseParser';
+import { exchangeCodeForTokens } from './interactionCode';
 
 const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
   const rawIdxResponse =  idxResponse;
   const { remediations, context, actions } = parseIdxResponse( idxResponse, toPersist );
   const neededToProceed = [...remediations];
-
 
   const proceed = async function( remediationChoice, paramsFromUser = {} ) {
     /*
@@ -21,13 +21,19 @@ const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
     return remediationChoiceObject.action(paramsFromUser);
   };
 
-  const hasInteractionCode = function hasInteractionCode() { 
+  const hasInteractionCode = function hasInteractionCode() {
     return !!rawIdxResponse.successWithInteractionCode;
   };
 
-  const exchangeCode = async function exchangeCode() { 
-    // FIXME - generate action from successWithInteractionCode, include PKCE
-    return {}; // Will be tokens
+  const exchangeCode = async function exchangeCode() {
+    // Currently ignoring the ION response, since it currently lies (about PKCE, etc)
+    // Ultimately we should switch to parsing it as an ION action
+    const findCode = item => item.name === 'interaction_code';
+    const interactionCode = rawIdxResponse.successWithInteractionCode.value.find( findCode ).value;
+    return exchangeCodeForTokens({
+      ...toPersist,
+      interactionCode,
+    });
   };
 
   return {

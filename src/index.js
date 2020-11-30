@@ -7,7 +7,11 @@ const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
 const start = async function start({ clientId, domain, issuer, stateHandle, version, redirectUri, state, scopes }) {
   let interactionHandle;
-  const toPersist = {};
+  const toPersist = {
+    issuer,
+    clientId,
+    state,
+  };
 
   if ( !domain && !issuer) {
     return Promise.reject({ error: 'issuer is required' });
@@ -21,7 +25,7 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
     return Promise.reject({ error: 'redirectUri is required' });
   }
 
-  if ( !domain ) { 
+  if ( !domain ) {
     domain = new URL(issuer).origin;
   }
 
@@ -36,11 +40,20 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
 
   if ( !stateHandle ) {
     try {
-      const { codeChallenge, codeVerifier } = pkce.makeCodePair();
-      toPersist.codeChallenge = codeChallenge;
+      const { codeChallenge, codeChallengeMethod, codeVerifier } = pkce.makeCode();
       toPersist.codeVerifier = codeVerifier;
 
-      const interaction_handle = await bootstrap({ clientId, issuer, scopes, redirectUri, codeChallenge, state });
+      const bootstrapParams = {
+        clientId,
+        issuer,
+        scopes,
+        redirectUri,
+        codeChallenge,
+        codeChallengeMethod,
+        state
+      };
+
+      const interaction_handle = await bootstrap( bootstrapParams );
       interactionHandle = interaction_handle;
       toPersist.interactionHandle = interactionHandle;
     } catch (error) {
