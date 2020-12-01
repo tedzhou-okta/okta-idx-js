@@ -20,7 +20,6 @@ export const exchangeCodeForTokens = function exchangeCodeForTokens({ interactio
     },
     body,
   })
-    .then( response => response.ok ? response.json() : parseAndReject(response) )
-    .then( data => data.tokens);
+    .then( response => response.ok ? response.json() : parseAndReject(response) );
 
 };
