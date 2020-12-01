@@ -40,7 +40,7 @@ const start = async function start({ clientId, domain, issuer, stateHandle, vers
 
   if ( !stateHandle ) {
     try {
-      const { codeChallenge, codeChallengeMethod, codeVerifier } = pkce.makeCode();
+      const { codeChallenge, codeChallengeMethod, codeVerifier } = await pkce.makeCode();
       toPersist.codeVerifier = codeVerifier;
 
       const bootstrapParams = {

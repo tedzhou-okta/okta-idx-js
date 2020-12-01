@@ -37,7 +37,7 @@ function generateVerifier(prefix) {
   return encodeURIComponent(verifier).slice(0, MAX_VERIFIER_LENGTH);
 }
 
-function computeChallenge(str, codeChallengeMethod = DEFAULT_CODE_CHALLENGE_METHOD) {
+async function computeChallenge(str, codeChallengeMethod = DEFAULT_CODE_CHALLENGE_METHOD) {
   const buffer = new TextEncoder().encode(str);
   const algorithm = CODE_CHALLENGE_ALGORITHM[codeChallengeMethod];
 
@@ -48,9 +48,9 @@ function computeChallenge(str, codeChallengeMethod = DEFAULT_CODE_CHALLENGE_METH
   });
 }
 
-export const makeCode = function makeCode() {
+export const makeCode = async function makeCode() {
   const codeVerifier = generateVerifier();
-  const codeChallenge = computeChallenge(codeVerifier);
+  const codeChallenge = await computeChallenge(codeVerifier);
   return {
     codeChallenge,
     codeVerifier,
