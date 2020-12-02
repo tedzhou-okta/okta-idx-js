@@ -9,7 +9,7 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
       method: actionDefinition.method,
       headers: {
         'content-type': 'application/json',
-        'accepts': actionDefinition.accepts || 'application/ion+json',
+        'accept': actionDefinition.accepts || 'application/ion+json',
       },
       body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
     })
