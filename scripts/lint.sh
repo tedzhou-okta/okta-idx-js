@@ -5,6 +5,9 @@ source ${OKTA_HOME}/${REPO}/scripts/setup.sh
 export TEST_SUITE_TYPE="checkstyle"
 export TEST_RESULT_FILE_DIR="${REPO}/test-reports/lint"
 
+echo $TEST_SUITE_TYPE > $TEST_SUITE_TYPE_FILE
+echo $TEST_RESULT_FILE_DIR > $TEST_RESULT_FILE_DIR_FILE
+
 # The lint command in package.json will always succeed. Errors are reported
 # via the generated report.
 yarn lint-report
@@ -30,6 +33,4 @@ then
     exit $BUILD_FAILURE;
 fi
 
-echo ${TEST_SUITE_TYPE} > ${TEST_SUITE_TYPE_FILE}
-echo ${TEST_RESULT_FILE_DIR} > ${TEST_RESULT_FILE_DIR_FILE}
-exit ${PUBLISH_TYPE_AND_RESULT_DIR}
+exit $PUBLISH_TYPE_AND_RESULT_DIR_BUT_SUCCEED_IF_NO_RESULTS;

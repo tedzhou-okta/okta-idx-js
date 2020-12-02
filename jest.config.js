@@ -97,7 +97,14 @@ module.exports = {
   // projects: null,
 
   // Use this configuration option to add custom reporters to Jest
-  // reporters: undefined,
+  // reporters: [ "default", "jest-junit" ],
+  reporters: [
+    'default',
+    [ 'jest-junit', {
+      outputDirectory: 'test-reports/unit',
+      outputName: 'jest-junit.xml',
+    } ]
+  ],
 
   // Automatically reset mock state between every test
   // resetMocks: false,
