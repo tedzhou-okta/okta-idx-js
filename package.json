@@ -26,27 +26,25 @@
   "devDependencies": {
     "@babel/cli": "^7.7.0",
     "@babel/core": "^7.7.2",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.6.0",
-    "@babel/plugin-transform-runtime": "^7.7.5",
+    "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.7.1",
-    "@babel/runtime-corejs3": "^7.7.5",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.6",
-    "core-js": "3",
+    "core-js": "^3.8.0",
     "cross-fetch": "^3.0.4",
     "dotenv": "^8.2.0",
     "eslint": "^6.6.0",
     "jest": "^24.9.0",
     "prettier": "^2.0.5",
-    "regenerator-runtime": "^0.13.3",
     "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "@babel/runtime-corejs3": "^7.12.5",
     "jsonpath": "^1.0.2"
   }
 }
