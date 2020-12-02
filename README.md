@@ -31,12 +31,25 @@ import idx from `@okta/okta-idx-js`;
 
 `idx.start()` is passed a config object and returns a promise that resolves to an `idxState` object.
 
-The config object params:
-- **domain**: (required) The protocol+domain (but no path!) of the Okta issuer domain
-- **stateHandle**: (required TODO: Until Bootstrap) The current stateHandle string
-- **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You should manually specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
+Because the flows for an Okta-hosted scenario are different than a customer-hosted scenario, they require different configurations.
 
-`idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the `stateHandle`
+The Customer-hosted config object params:
+
+- **clientId**: (required) Client Id pre-registered with Okta for the OIDC authentication flow.
+- **issuer**: (required) The protocol+domain+path of the Okta issuer domain (Authorization Server).
+- **redirectUri**: (required) The url that is redirected to after authentication. This must be pre-registered as part of client registration in the okta application console.
+- **scopes**: (optional) Specify what information to make available in the returned tokens by providing an array of strings with known meaning as an OIDC scope.  Defaults to ['openid', 'email'].
+- **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You must specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
+- **interactionHandle**: (optional) The current interactionHandle of a customer-hosted flow in-progress.  New flows will not have an existing handle and should not try to pass this value.
+
+The Okta-hosted config object params:
+
+- **issuer**: (required) The protocol+domain+path of the Okta issuer domain (Authorization Server)
+- **domain**: (deprecated - use `issuer` instead) The protocol+domain (but no path!) of the Okta issuer domain
+- **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You should manually specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
+- **stateHandle**: (required) The current stateHandle string for an okta-hosted flow
+
+`idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the passed **interactionHandle** (customer-hosted) or **stateHandle** (okta-hosted)
 
 ```
 let idxState;
@@ -57,7 +70,12 @@ The happy path for idx-js is
 - Collect the data from the user (generating a UI is outside the scope of idx-js)
 - Pass the collected data to `idxState.proceed('name of remediation', dataObject)`
 - The returned promise resolves to a new `idxState` object
-- Continue this loop until `idxState.context.success` is populated 
+- Continue this loop until 
+  - Okta-hosted: `idxState.context.success` is populated 
+  - Customer-hosted: `idxState.hasInteractionCode()` returns true
+- Get your tokens
+  - Okta-hosted: follow the `success-redirect` link in the response to the application
+  - Customer-hosted: `idxState.exchangeCode()` will return a promise that resolves with an object with the token(s) requested by the `scopes` passed to the initial call to `idx.start(...)`
 
 The less-than-happy paths include these options:
 - Canceling the flow: Actions that don't result in a new (usable) idxState are collected into an object of functions, `idxState.actions`
@@ -106,6 +124,14 @@ The less-than-happy paths include these options:
 - `actions.cancel()` - Cancels the current authentication flow
 - actions involving factor resets (e.g. forgotten passwords)
 - actions involving WebAuthN interactions (TODO: Confirm flows)
+
+#### idxState.hasInteractionCode()
+
+`hasInteractionCode()` returns `true` if the flow has resulted in a final success and the idxState contains an interactionCode that can be exchanged for tokens.  Not used in the Okta-hosted flow.
+
+#### idxState.exchangeCode()
+
+`exchangeCode()` returns a promise that resolves to an object with the tokens requested by the `scopes` initially passed to `start`.  This method will not be present when there is no code to exchange (see `hasInteractionCode()` above).
 
 #### idxState.rawIdxResponse
 
