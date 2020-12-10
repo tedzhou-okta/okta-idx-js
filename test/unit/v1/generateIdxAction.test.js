@@ -43,7 +43,7 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: { 
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -69,7 +69,7 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -95,7 +95,7 @@ describe('generateIdxAction', () => {
           body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -119,7 +119,7 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
@@ -145,7 +145,7 @@ describe('generateIdxAction', () => {
           body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
           },
           method: "POST"
         });
