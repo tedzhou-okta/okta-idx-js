@@ -3,8 +3,8 @@ import { userAgentHeaders } from '../userAgent';
 
 const parseAndReject = response =>  response.json().then( err => Promise.reject(err));
 
-export const exchangeCodeForTokens = function exchangeCodeForTokens({ interactionCode, clientId, issuer, codeVerifier }) {
-  const tokenUrl = `${issuer}/v1/token`;
+export const exchangeCodeForTokens = function exchangeCodeForTokens({ interactionCode, clientId, baseUrl, codeVerifier }) {
+  const tokenUrl = `${baseUrl}/v1/token`;
   const body = Object.entries({
     client_id: clientId,
     code_verifier: codeVerifier,

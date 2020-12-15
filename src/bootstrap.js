@@ -5,7 +5,7 @@ const parseAndReject = response =>  response.json().then( err => Promise.reject(
 
 const bootstrap = async function bootstrap({
   clientId,
-  issuer,
+  baseUrl,
   scopes = ['openid', 'email'],
   redirectUri,
   codeChallenge,
@@ -13,7 +13,7 @@ const bootstrap = async function bootstrap({
   state
 }) {
 
-  const target = `${issuer}/v1/interact`;
+  const target = `${baseUrl}/v1/interact`;
   const body = Object.entries({
     client_id: clientId,
     scope: scopes.join(' '),

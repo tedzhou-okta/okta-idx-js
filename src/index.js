@@ -17,8 +17,9 @@ const start = async function start({
 }) {
 
   let interactionHandle;
+  const baseUrl = issuer?.indexOf('/oauth2') > 0 ? issuer : issuer + '/oauth2'; // org AS uses domain as AS, but we need the base url for calls
   const toPersist = {
-    issuer,
+    baseUrl,
     clientId,
     state,
   };
@@ -55,7 +56,7 @@ const start = async function start({
 
       const bootstrapParams = {
         clientId,
-        issuer,
+        baseUrl,
         scopes,
         redirectUri,
         codeChallenge,
