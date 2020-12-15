@@ -41,16 +41,6 @@ describe('idx-js', () => {
         });
     });
 
-    xit('rejects without a stateHandle', async () => {
-      return idx.start({ domain, version })
-        .then( () => {
-          fail('expected idx.start to reject when not given a stateHandle');
-        })
-        .catch( err => {
-          expect(err).toStrictEqual({ error: 'stateHandle is required'});
-        });
-    });
-
     it('rejects without a domain', async () => {
       return idx.start({ stateHandle, version })
         .then( () => {
