@@ -1,5 +1,6 @@
 import fetch from 'cross-fetch';
 import { divideActionParamsByMutability } from './actionParser';
+import { userAgentHeaders } from '../userAgent';
 import makeIdxState from './makeIdxState';
 
 const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {}, toPersist } ) {
@@ -8,6 +9,7 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
     return fetch(target, {
       method: actionDefinition.method,
       headers: {
+        ...userAgentHeaders(),
         'content-type': 'application/json',
         'accept': actionDefinition.accepts || 'application/ion+json',
       },

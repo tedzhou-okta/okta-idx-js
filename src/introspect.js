@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { userAgentHeaders } from './userAgent';
 
 const introspect = async function introspect({ domain, interactionHandle, stateHandle, version }) {
 
@@ -7,6 +8,7 @@ const introspect = async function introspect({ domain, interactionHandle, stateH
   return fetch(target, {
     method: 'POST',
     headers: {
+      ...userAgentHeaders(),
       'content-type': `application/ion+json; okta-version=${version}`, // Server wants this version info
       accept: `application/ion+json; okta-version=${version}`,
     },

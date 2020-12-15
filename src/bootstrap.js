@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { userAgentHeaders } from './userAgent';
 
 const parseAndReject = response =>  response.json().then( err => Promise.reject(err));
 
@@ -27,6 +28,7 @@ const bootstrap = async function bootstrap({
   return fetch(target, {
     method: 'POST',
     headers: {
+      ...userAgentHeaders(),
       'content-type': 'application/x-www-form-urlencoded',
     },
     body,

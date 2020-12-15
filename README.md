@@ -1,9 +1,12 @@
 # okta-idx-js
+
 Okta IDX API consumption layer for Javascript
 
-Though focused on browser-based interactions, it should also be usable on the server-side, albeit for limited interactions.
+:grey_exclamation: The use of this SDK requires you to be a part of our limited general availability (LGA) program with access to Okta Identity Engine. If you want to request to be a part of our LGA program for Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
 
-This library is intended to ease JS-based integration with the Okta Identity Engine (OIE).  This library wraps the sequence of calls to the Okta IDX endpoints so that the consumer doesn't have to parse the entirety of each response, nor manage XHR calls.
+Currently focused on browser-based interactions, but server-side functionality is expected soon.
+
+This library is intended to ease JS-based integration with the Okta Identity Engine (OIE) making use if the Okta Identity Experience (IDX) API.  This library wraps the sequence of calls to the Okta IDX endpoints so that the consumer doesn't have to parse the entirety of each response, nor manage XHR calls.
 
 Though this library exposes the metadata needed to generate a UI to gather needed data and select between available options, the consumer is responsible for interpeting and acting on that metadata - idx-js is focused on sending passed data to the appropriate endpoint for the selected actions only.
 

@@ -1,3 +1,5 @@
+/* global btoa crypto */
+
 // Code verifier: Random URL-safe string with a minimum length of 43 characters.
 // Code challenge: Base64 URL-encoded SHA-256 hash of the code verifier.
 const MIN_VERIFIER_LENGTH = 43;

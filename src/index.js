@@ -5,7 +5,17 @@ import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
-const start = async function start({ clientId, domain, issuer, stateHandle, version, redirectUri, state, scopes }) {
+const start = async function start({
+  clientId,
+  domain,
+  issuer,
+  stateHandle,
+  version,
+  redirectUri,
+  state,
+  scopes,
+}) {
+
   let interactionHandle;
   const toPersist = {
     issuer,

@@ -44,6 +44,7 @@ describe('generateIdxAction', () => {
           headers: { 
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -70,6 +71,7 @@ describe('generateIdxAction', () => {
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -96,6 +98,7 @@ describe('generateIdxAction', () => {
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -120,6 +123,7 @@ describe('generateIdxAction', () => {
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -146,6 +150,7 @@ describe('generateIdxAction', () => {
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });

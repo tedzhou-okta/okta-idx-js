@@ -1,4 +1,5 @@
 import fetch from 'cross-fetch';
+import { userAgentHeaders } from '../userAgent';
 
 const parseAndReject = response =>  response.json().then( err => Promise.reject(err));
 
@@ -16,6 +17,7 @@ export const exchangeCodeForTokens = function exchangeCodeForTokens({ interactio
   return fetch(tokenUrl, {
     method: 'POST',
     headers: {
+      ...userAgentHeaders(),
       'content-type': 'application/x-www-form-urlencoded',
     },
     body,

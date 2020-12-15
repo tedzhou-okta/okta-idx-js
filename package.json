@@ -1,6 +1,6 @@
 {
   "name": "@okta/okta-idx-js",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Okta JS-based consumption layer for IDX API",
   "main": "src/index.js",
   "scripts": {
