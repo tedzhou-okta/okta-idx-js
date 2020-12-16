@@ -1,5 +1,4 @@
 import { parseIdxResponse } from './idxResponseParser';
-import { exchangeCodeForTokens } from './interactionCode';
 
 const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
   const rawIdxResponse =  idxResponse;
@@ -25,16 +24,8 @@ const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
     return !!rawIdxResponse.successWithInteractionCode;
   };
 
-  const exchangeCode = async function exchangeCode() {
-    // Currently ignoring the ION response, since it currently lies (about PKCE, etc)
-    // Ultimately we should switch to parsing it as an ION action
-    const findCode = item => item.name === 'interaction_code';
-    const interactionCode = rawIdxResponse.successWithInteractionCode.value.find( findCode ).value;
-    return exchangeCodeForTokens({
-      ...toPersist,
-      interactionCode,
-    });
-  };
+  const findCode = item => item.name === 'interaction_code';
+  const interactionCode = rawIdxResponse.successWithInteractionCode?.value.find( findCode ).value;
 
   return {
     proceed,
@@ -43,8 +34,8 @@ const makeIdxState = function makeIdxState( idxResponse, toPersist ) {
     context,
     rawIdxState: rawIdxResponse,
     hasInteractionCode,
-    ...hasInteractionCode() ? { exchangeCode } : {},
-    toPersist
+    interactionCode,
+    toPersist,
   };
 };
 

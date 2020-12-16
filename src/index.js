@@ -1,6 +1,5 @@
 import introspect from './introspect';
 import bootstrap from './bootstrap';
-import pkce from './pkce';
 import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
@@ -14,6 +13,8 @@ const start = async function start({
   redirectUri,
   state,
   scopes,
+  codeChallenge,
+  codeChallengeMethod,
 }) {
 
   let interactionHandle;
@@ -36,6 +37,10 @@ const start = async function start({
     return Promise.reject({ error: 'redirectUri is required' });
   }
 
+  if (!stateHandle && !(codeChallenge && codeChallengeMethod)) {
+    return Promise.reject({ error: 'PKCE params (codeChallenge, codeChallengeMethod) are required' });
+  }
+
   if ( !domain ) {
     domain = new URL(issuer).origin;
   }
@@ -49,11 +54,8 @@ const start = async function start({
     return Promise.reject({ error: 'invalid version supplied - version is required and uses semver syntax'});
   }
 
-  if ( !stateHandle ) {
+  if ( !stateHandle ) { // customer-hosted
     try {
-      const { codeChallenge, codeChallengeMethod, codeVerifier } = await pkce.makeCode();
-      toPersist.codeVerifier = codeVerifier;
-
       const bootstrapParams = {
         clientId,
         baseUrl,

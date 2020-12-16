@@ -17,12 +17,13 @@ const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
 const version = '1.0.0';
 const clientId = 'CLIENT_ID';
+const redirectUri = 'https://example.com/fake';
 
 describe('idx-js', () => {
   describe('start', () => {
 
     it('requires a clientId when there is no stateHandle', async () => { 
-      return idx.start({ domain, version })
+      return idx.start({ domain, version, redirectUri })
         .then( () => { 
           fail('expected idx.start to reject without one of: clientId, stateHandle');
         })
@@ -38,6 +39,16 @@ describe('idx-js', () => {
         })
         .catch( err => { 
           expect(err).toStrictEqual({ error: 'redirectUri is required' });
+        });
+    });
+
+    it('requires PKCE attributes when there is no stateHandle', async () => { 
+      return idx.start({ domain, clientId, version, redirectUri })
+        .then( () => { 
+          fail('expected idx.start to reject without PKCE params if no stateHandle');
+        })
+        .catch( err => { 
+          expect(err).toStrictEqual({ error: 'PKCE params (codeChallenge, codeChallengeMethod) are required' });
         });
     });
 
