@@ -15,9 +15,13 @@ fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mo
 
 const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
+const orgIssuer = 'http://okta.example.com';
+const customIssuer = 'http://okta.example.com/oauth2/default';
 const version = '1.0.0';
 const clientId = 'CLIENT_ID';
 const redirectUri = 'https://example.com/fake';
+const codeChallenge = 'BASE64URLENCODED';
+const codeChallengeMethod = 'S256';
 
 describe('idx-js', () => {
   describe('start', () => {
@@ -52,7 +56,35 @@ describe('idx-js', () => {
         });
     });
 
-    it('rejects without a domain', async () => {
+    it('handles updating the baseUrl for an org authorization server issuer', async () => { 
+      return idx.start({ issuer: `${orgIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
+        });
+    });
+
+    it('accepts the baseUrl from a custom authorization server issuer', async () => { 
+      return idx.start({ issuer: `${customIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
+        });
+    });
+    
+    it('handles an org AS issuer with a trailing slash', async () => {
+      return idx.start({ issuer: `${orgIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
+        })
+    });
+
+    it('handles a custom AS issuer with a trailing slash', async () => {
+      return idx.start({ issuer: `${customIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
+        })
+    });
+
+    it('rejects if there is no domain or issuer', async () => {
       return idx.start({ stateHandle, version })
         .then( () => {
           fail('expected idx.start to reject when not given a domain');

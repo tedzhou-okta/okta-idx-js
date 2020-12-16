@@ -18,6 +18,8 @@ const start = async function start({
 }) {
 
   let interactionHandle;
+
+  issuer = issuer?.replace(/\/+$/, '');
   const baseUrl = issuer?.indexOf('/oauth2') > 0 ? issuer : issuer + '/oauth2'; // org AS uses domain as AS, but we need the base url for calls
   const toPersist = {
     baseUrl,
