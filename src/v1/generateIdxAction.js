@@ -25,7 +25,12 @@ const generateDirectFetch = function generateDirectFetch( { actionDefinition, de
           // the SIW can proceed to the next step without showing error
           return respJson.then(err => Promise.reject(makeIdxState(err)) );
         }
-        return respJson.then(err => Promise.reject(err));
+        return respJson.then(err => {
+          if (err.version) { // assumed idx response
+            return err; // idx response as HTTP errors are not treated as errors
+          }
+          return Promise.reject(err);
+        });
       })
       .then( idxResponse => makeIdxState(idxResponse) );
   };
