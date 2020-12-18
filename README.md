@@ -2,7 +2,7 @@
 
 Okta IDX API consumption layer for Javascript
 
-:grey_exclamation: The use of this SDK requires you to be a part of our limited general availability (LGA) program with access to Okta Identity Engine. If you want to request to be a part of our LGA program for Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
+The use of this SDK requires usage of the Okta Identity Engine. This functionality is in general availability but is being gradually rolled out to customers. If you want to request to gain access to the Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
 
 Currently focused on browser-based interactions, but server-side functionality is expected soon.
 
@@ -34,30 +34,23 @@ import idx from `@okta/okta-idx-js`;
 
 `idx.start()` is passed a config object and returns a promise that resolves to an `idxState` object.
 
-Because the flows for an Okta-hosted scenario are different than a customer-hosted scenario, they require different configurations.
-
-The Customer-hosted config object params:
+Configuration params:
 
 - **clientId**: (required) Client Id pre-registered with Okta for the OIDC authentication flow.
 - **issuer**: (required) The protocol+domain+path of the Okta issuer domain (Authorization Server).
 - **redirectUri**: (required) The url that is redirected to after authentication. This must be pre-registered as part of client registration in the okta application console.
-- **scopes**: (optional) Specify what information to make available in the returned tokens by providing an array of strings with known meaning as an OIDC scope.  Defaults to ['openid', 'email'].
 - **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You must specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
+- **codeChallenge**: (required) A PKCE code challenge (base64UrlEncoded hash of code verifier, which is maintained outside of the idx-js library
+- **codeChallengeMethod**: (required) The method used to generate the hash of the PKCE code challenge.  Per PKCE spec, this is currently 'S256'
+- **scopes**: (optional) Specify what information to make available in the returned tokens by providing an array of strings with known meaning as an OIDC scope.  Defaults to ['openid', 'email'].
 - **interactionHandle**: (optional) The current interactionHandle of a customer-hosted flow in-progress.  New flows will not have an existing handle and should not try to pass this value.
 
-The Okta-hosted config object params:
-
-- **issuer**: (required) The protocol+domain+path of the Okta issuer domain (Authorization Server)
-- **domain**: (deprecated - use `issuer` instead) The protocol+domain (but no path!) of the Okta issuer domain
-- **version**: (required) The server version of the IDX api. (Example: "1.0.0")  You should manually specify a specific version as any change in the parsed output can have drastic impact on anything relying on this library.
-- **stateHandle**: (required) The current stateHandle string for an okta-hosted flow
-
-`idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the passed **interactionHandle** (customer-hosted) or **stateHandle** (okta-hosted)
+`idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the passed **interactionHandle** (customer-hosted)
 
 ```
 let idxState;
 try { 
-  idxState = await idx.start({ domain, stateHandle, version });
+  idxState = await idx.start({ issuer, clientId, redirectUri, version, codeChallenge, codeChallengeMethod });
   // idxState has properties and methods
 } catch (err) { 
   // err.error has an error message
@@ -73,21 +66,12 @@ The happy path for idx-js is
 - Collect the data from the user (generating a UI is outside the scope of idx-js)
 - Pass the collected data to `idxState.proceed('name of remediation', dataObject)`
 - The returned promise resolves to a new `idxState` object
-- Continue this loop until 
-  - Okta-hosted: `idxState.context.success` is populated 
-  - Customer-hosted: `idxState.hasInteractionCode()` returns true
-- Get your tokens
-  - Okta-hosted: follow the `success-redirect` link in the response to the application
-  - Customer-hosted: `idxState.exchangeCode()` will return a promise that resolves with an object with the token(s) requested by the `scopes` passed to the initial call to `idx.start(...)`
+- Continue this loop until `idxState.hasInteractionCode()` returns true
+- Get an `interactionCode` from `idxState.interactionCode`
+- Exchange the `interactionCode` to obtain tokens.  This is outside idx-js, but can be done with (for example) okta-auth-js `token.exchangeCodeForTokens(...)`
 
 The less-than-happy paths include these options:
 - Canceling the flow: Actions that don't result in a new (usable) idxState are collected into an object of functions, `idxState.actions`
-- Redirecting to an IDP: These redirects need to be done as full-page redirects and are not done inside of idx-js.  
-  - The redirections will have `name: 'redirect'` in the `idxState.neededToProceed` array
-  - A redirection entry will have additional metadata in the `.relatesTo` property.
-  - Any redirection entries will contain the `.href` to redirect the page to
-- WebAuthN: TODO
-- Errors: TODO
 - Something complicated: `idxState.rawIdxResponse` gives you access to the uninterpreted response 
 
 ### idxState Methods and Properties
@@ -111,14 +95,13 @@ The less-than-happy paths include these options:
 
 `context` is an object of any metadata values about the current state of the IDX request and/or potential remediations.  Possible properties within this object include:
 - `expiresAt` - When the current stateHandle expires
-- `step` - What step in the OIE flow the request is currently at (TODO: Where is this documented?)
-- `intent` - The intent of the step in the OIE flow (TODO: Where is this documented?)
+- `intent` - The intent (e.g. "LOGIN") of the IDX flow
 - `user` - Information about the user currently in the flow
 - `stateHandle` - The current stateHandle value
-- `version` - What version of the IDX API in use (TODO: Confirm after Versioning discussions)
+- `version` - What version of the IDX API in use
 - `factor` - Information about the current factor being used for authentication
-- `terminal` - Any terminal errors (TODO: Confirm still correct)
-- `messages` - Any message information (TODO: Confirm still correct)
+- `terminal` - Any terminal errors
+- `messages` - Any message information.  Note that messages that pertain to particular fields will be in the remediation structures describing those fields.
 - `success` - The result information for a successful flow
 
 #### idxState.actions
@@ -132,9 +115,9 @@ The less-than-happy paths include these options:
 
 `hasInteractionCode()` returns `true` if the flow has resulted in a final success and the idxState contains an interactionCode that can be exchanged for tokens.  Not used in the Okta-hosted flow.
 
-#### idxState.exchangeCode()
+#### idxState.interactionCode
 
-`exchangeCode()` returns a promise that resolves to an object with the tokens requested by the `scopes` initially passed to `start`.  This method will not be present when there is no code to exchange (see `hasInteractionCode()` above).
+`interactionCode` is the value returned at the end of a successful IDX flow.  This value can be sent to the Okta `v1/token` endpoint to be exchanged for the tokens matching the requesting scope.  The PKCE `code_verifier` used to produce the `codeChallenge` sent to `idx.start(...)` must be sent to the token endpoint as well.
 
 #### idxState.rawIdxResponse
 
