@@ -43,7 +43,8 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: { 
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -69,7 +70,8 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -95,7 +97,8 @@ describe('generateIdxAction', () => {
           body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -119,7 +122,8 @@ describe('generateIdxAction', () => {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });
@@ -145,7 +149,8 @@ describe('generateIdxAction', () => {
           body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
-            'accepts': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
           method: "POST"
         });

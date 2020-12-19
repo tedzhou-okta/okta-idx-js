@@ -15,28 +15,82 @@ fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mo
 
 const stateHandle = 'FAKE_STATE_HANDLE';
 const domain = 'http://okta.example.com';
+const orgIssuer = 'http://okta.example.com';
+const customIssuer = 'http://okta.example.com/oauth2/default';
 const version = '1.0.0';
+const clientId = 'CLIENT_ID';
+const redirectUri = 'https://example.com/fake';
+const codeChallenge = 'BASE64URLENCODED';
+const codeChallengeMethod = 'S256';
 
 describe('idx-js', () => {
   describe('start', () => {
 
-    it('rejects without a stateHandle', async () => {
-      return idx.start({ domain, version })
-        .then( () => {
-          fail('expected idx.start to reject when not given a stateHandle');
+    it('requires a clientId when there is no stateHandle', async () => { 
+      return idx.start({ domain, version, redirectUri })
+        .then( () => { 
+          fail('expected idx.start to reject without one of: clientId, stateHandle');
         })
-        .catch( err => {
-          expect(err).toStrictEqual({ error: 'stateHandle is required'});
+        .catch( err => { 
+          expect(err).toStrictEqual({ error: 'clientId is required' });
         });
     });
 
-    it('rejects without a domain', async () => {
+    it('requires a redirectUri when there is no stateHandle', async () => { 
+      return idx.start({ domain, clientId, version })
+        .then( () => { 
+          fail('expected idx.start to reject without one of: redirectUri, stateHandle');
+        })
+        .catch( err => { 
+          expect(err).toStrictEqual({ error: 'redirectUri is required' });
+        });
+    });
+
+    it('requires PKCE attributes when there is no stateHandle', async () => { 
+      return idx.start({ domain, clientId, version, redirectUri })
+        .then( () => { 
+          fail('expected idx.start to reject without PKCE params if no stateHandle');
+        })
+        .catch( err => { 
+          expect(err).toStrictEqual({ error: 'PKCE params (codeChallenge, codeChallengeMethod) are required' });
+        });
+    });
+
+    it('handles updating the baseUrl for an org authorization server issuer', async () => { 
+      return idx.start({ issuer: `${orgIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
+        });
+    });
+
+    it('accepts the baseUrl from a custom authorization server issuer', async () => { 
+      return idx.start({ issuer: `${customIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
+        });
+    });
+    
+    it('handles an org AS issuer with a trailing slash', async () => {
+      return idx.start({ issuer: `${orgIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
+        })
+    });
+
+    it('handles a custom AS issuer with a trailing slash', async () => {
+      return idx.start({ issuer: `${customIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
+        .then( idxState => {
+          expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
+        })
+    });
+
+    it('rejects if there is no domain or issuer', async () => {
       return idx.start({ stateHandle, version })
         .then( () => {
           fail('expected idx.start to reject when not given a domain');
         })
         .catch( err => {
-          expect(err).toStrictEqual({ error: 'domain is required'});
+          expect(err).toStrictEqual({ error: 'issuer is required'});
         });
     });
 

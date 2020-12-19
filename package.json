@@ -1,6 +1,6 @@
 {
   "name": "@okta/okta-idx-js",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Okta JS-based consumption layer for IDX API",
   "main": "src/index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.7.1",
+    "@peculiar/webcrypto": "^1.1.4",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.3",
     "babel-jest": "^24.9.0",
