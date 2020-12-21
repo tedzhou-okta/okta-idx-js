@@ -1,14 +1,53 @@
 # okta-idx-js
 
-Okta IDX API consumption layer for Javascript
+[devforum]: https://devforum.okta.com/
+[github-issues]: https://github.com/okta/okta-idx-js/issues
+[github-releases]: https://github.com/okta/okta-idx-js/releases
+[okta-library-versioning]: https://developer.okta.com/code/library-versions/
 
-The use of this SDK requires usage of the Okta Identity Engine. This functionality is in general availability but is being gradually rolled out to customers. If you want to request to gain access to the Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
+This repository contains the Okta IDX SDK for Javascript.  Currently focused on browser-based interactions, but server-side functionality is available.
 
-Currently focused on browser-based interactions, but server-side functionality is expected soon.
+> :grey_exclamation:  The use of this SDK requires usage of the Okta Identity Engine. This functionality is in general availability but is being gradually rolled out to customers. If you want to request to gain access to the Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
+
+> :warning: Beta alert! This library is in beta. See [release status](#release-status) for more information.
+
+* [Release status](#release-status)
+* [Need help?](#need-help)
+* [Getting started](#getting-started)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+
 
 This library is intended to ease JS-based integration with the Okta Identity Engine (OIE) making use if the Okta Identity Experience (IDX) API.  This library wraps the sequence of calls to the Okta IDX endpoints so that the consumer doesn't have to parse the entirety of each response, nor manage XHR calls.
 
 Though this library exposes the metadata needed to generate a UI to gather needed data and select between available options, the consumer is responsible for interpeting and acting on that metadata - idx-js is focused on sending passed data to the appropriate endpoint for the selected actions only.
+
+
+## Release status
+
+This library uses semantic versioning and follows Okta's [Library Version Policy][okta-library-versioning].
+
+| Version | Status                             |
+| ------- | ---------------------------------- |
+| 0.x.x   | :warning: Beta |
+
+The latest release can always be found on the [releases page][github-releases].
+
+## Need help?
+ 
+If you run into problems using the SDK, you can
+ 
+* Ask questions on the [Okta Developer Forums][devforum]
+* Post [issues][github-issues] here on GitHub (for code errors)
+
+## Getting started
+
+### Prerequisites
+
+You will need:
+
+* An Okta account, called an _organization_ (sign up for a free [developer organization](https://developer.okta.com/signup) if you need one)
 
 ## Installation
 
@@ -124,6 +163,8 @@ The less-than-happy paths include these options:
 `rawIdxResponse` is an object containing the raw Ion response.  It is included to cover the uncommon cases that idx-js doesn't serve well, but the goal is to minimize the need and use of it, as any useful information should be more easily obtained in `.neededToProceed`, `.actions`, or `.context`.
 
 ## Contributing
+ 
+We are happy to accept contributions and PRs! Please see the [contribution guide](CONTRIBUTING.md) to understand how to structure a contribution.
 
 ### Running tests
 
@@ -134,5 +175,4 @@ CLIENT_ID={clientId}
 REDIRECT_URI=http://localhost:8080/implicit/callback
 USER_IDENTIFIER={userEmailAddress}
 ```
-
 
