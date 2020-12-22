@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
 
@@ -28,7 +28,7 @@ fi
 # Update default regsitry before publishing
 npm config set @okta:registry ${REGISTRY}
 
-if ! npm publish --unsafe-perm; then
+if ! npm publish --registry ${REGISTRY}; then
   echo "npm publish failed! Exiting..."
   exit ${PUBLISH_ARTIFACTORY_FAILURE}
 fi
