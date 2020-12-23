@@ -19,6 +19,7 @@
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
   "license": "Apache-2.0",
+  "private": true,
   "bugs": {
     "url": "https://github.com/okta/okta-idx-js/issues"
   },
