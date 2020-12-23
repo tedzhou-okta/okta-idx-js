@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
 
@@ -24,7 +24,7 @@ pushd ./dist
 # Update package version to include short-sha
 if ! ci-append-sha; then
   echo "ci-append-sha failed! Exiting..."
-  exit $FAILED_SETUP
+  exit ${FAILED_SETUP}
 fi
 
 # Update default regsitry before publishing

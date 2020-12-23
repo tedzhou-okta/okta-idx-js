@@ -1,9 +1,28 @@
-#!/bin/bash
+#!/bin/bash -xe
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
+
+# Add yarn to the $PATH so npm cli commands do not fail
+export PATH="${PATH}:$(yarn global bin)"
+
+# Install required node version
+export NVM_DIR="/root/.nvm"
 setup_service node v12.13.0
 
 cd ${OKTA_HOME}/${REPO}
+# undo permissions change on scripts/publish.sh
+git checkout -- scripts
+
+# ensure we're in a branch on the correct sha
+git checkout $BRANCH
+git reset --hard $SHA
+
+git config --global user.email "oktauploader@okta.com"
+git config --global user.name "oktauploader-okta"
+
+#!/bin/bash
+YARN_REGISTRY=https://registry.yarnpkg.com
+OKTA_REGISTRY=${ARTIFACTORY_URL}/api/npm/npm-okta-master
 
 # Yarn does not utilize the npmrc/yarnrc registry configuration
 # if a lockfile is present. This results in `yarn install` problems
@@ -14,10 +33,8 @@ cd ${OKTA_HOME}/${REPO}
 #  - https://github.com/yarnpkg/yarn/issues/5892
 #  - https://github.com/yarnpkg/yarn/issues/3330
 
-YARN_REGISTRY=https://registry.yarnpkg.com
-OKTA_REGISTRY=${ARTIFACTORY_URL}/api/npm/npm-okta-master
-
 # Replace yarn artifactory with Okta's
+echo "Replacing $YARN_REGISTRY with $OKTA_REGISTRY within yarn.lock files..."
 sed -i "s#${YARN_REGISTRY}#${OKTA_REGISTRY}#g" yarn.lock
 
 # Install dependences. --ignore-scripts will prevent chromedriver from attempting to install
@@ -27,4 +44,5 @@ if ! yarn install --frozen-lockfile --ignore-scripts; then
 fi
 
 # Revert the original change
+echo "Replacing $OKTA_REGISTRY with $YARN_REGISTRY within yarn.lock files..."
 sed -i "s#${OKTA_REGISTRY}#${YARN_REGISTRY}#" yarn.lock
