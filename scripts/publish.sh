@@ -19,10 +19,12 @@ else
   TARGET_BRANCH=${BRANCH}
 fi
 
+pushd ./dist
+
 # Update package version to include short-sha
 if ! ci-append-sha; then
   echo "ci-append-sha failed! Exiting..."
-  exit $FAILED_SETUP
+  exit ${FAILED_SETUP}
 fi
 
 # Update default regsitry before publishing
@@ -32,5 +34,7 @@ if ! npm publish --registry ${REGISTRY}; then
   echo "npm publish failed! Exiting..."
   exit ${PUBLISH_ARTIFACTORY_FAILURE}
 fi
+
+popd
 
 exit ${SUCCESS}

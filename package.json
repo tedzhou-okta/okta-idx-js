@@ -1,6 +1,6 @@
 {
   "name": "@okta/okta-idx-js",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Okta JS-based consumption layer for IDX API",
   "main": "dist/index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "bundle:prod": "webpack --mode=production",
     "lint": "eslint src",
     "lint-report": "eslint -f checkstyle -o test-reports/lint/idx-lint-result.xml src",
+    "prepare": "yarn build",
     "prepublishOnly": "yarn build",
     "test:unit": "jest test/unit",
     "test-report": "jest test/unit --coverage --ci",
