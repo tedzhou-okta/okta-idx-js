@@ -19,6 +19,7 @@
   "repository": "https://github.com/okta/okta-idx-js.git",
   "keywords": [],
   "license": "Apache-2.0",
+  "private": true,
   "bugs": {
     "url": "https://github.com/okta/okta-idx-js/issues"
   },
@@ -37,6 +38,7 @@
     "cross-fetch": "^3.0.4",
     "dotenv": "^8.2.0",
     "eslint": "^6.6.0",
+    "globby": "^11.0.1",
     "jest": "^24.9.0",
     "jest-junit": "^12.0.0",
     "prettier": "^2.0.5",
