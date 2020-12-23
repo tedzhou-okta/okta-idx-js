@@ -7,6 +7,8 @@ source ${OKTA_HOME}/${REPO}/scripts/setup.sh
 export TEST_SUITE_TYPE="build"
 export REGISTRY="${ARTIFACTORY_URL}/api/npm/npm-topic"
 
+npm config delete prefix # silence issues with initial build env
+
 # Install required dependencies
 export PATH="${PATH}:$(yarn global bin)"
 yarn global add @okta/ci-append-sha
