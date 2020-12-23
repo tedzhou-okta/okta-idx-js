@@ -38,7 +38,8 @@ echo "Replacing $YARN_REGISTRY with $OKTA_REGISTRY within yarn.lock files..."
 sed -i "s#${YARN_REGISTRY}#${OKTA_REGISTRY}#g" yarn.lock
 
 # Install dependences. --ignore-scripts will prevent chromedriver from attempting to install
-if ! yarn install --frozen-lockfile --ignore-scripts; then
+# if ! yarn install --frozen-lockfile --ignore-scripts; then
+if ! yarn install --frozen-lockfile; then
   echo "yarn install failed! Exiting..."
   exit ${FAILED_SETUP}
 fi
