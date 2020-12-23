@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 # NOTE: This is used for internal Okta testing.  Meaningless outside of Okta.
 
@@ -6,8 +6,6 @@ source ${OKTA_HOME}/${REPO}/scripts/setup.sh
 
 export TEST_SUITE_TYPE="build"
 export REGISTRY="${ARTIFACTORY_URL}/api/npm/npm-topic"
-
-nvm use --delete-prefix v8.11.1 --silent # silence issues with initial build env
 
 # Install required dependencies
 export PATH="${PATH}:$(yarn global bin)"
