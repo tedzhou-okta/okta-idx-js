@@ -22,6 +22,7 @@ const start = async function start({
   domain,
   issuer,
   stateHandle,
+  interactionHandle,
   version,
   redirectUri,
   state,
@@ -29,8 +30,6 @@ const start = async function start({
   codeChallenge,
   codeChallengeMethod,
 }) {
-
-  let interactionHandle;
 
   issuer = issuer?.replace(/\/+$/, '');
   const baseUrl = issuer?.indexOf('/oauth2') > 0 ? issuer : issuer + '/oauth2'; // org AS uses domain as AS, but we need the base url for calls
@@ -69,7 +68,7 @@ const start = async function start({
     return Promise.reject({ error: 'invalid version supplied - version is required and uses semver syntax'});
   }
 
-  if ( !stateHandle ) { // customer-hosted
+  if ( !stateHandle && !interactionHandle ) { // start a new transaction
     try {
       const bootstrapParams = {
         clientId,
