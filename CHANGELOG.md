@@ -1,3 +1,9 @@
+# 0.10.0
+
+### Other
+
+- [#48](https://github.com/okta/okta-idx-js/pull/48) Fix NPM module
+
 # 0.9.0
 
 ### Features
