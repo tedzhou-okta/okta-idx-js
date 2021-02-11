@@ -2,7 +2,7 @@
   "name": "@okta/okta-idx-js",
   "version": "0.9.0",
   "description": "Okta JS-based consumption layer for IDX API",
-  "main": "dist/index.js",
+  "main": "dist/idx.js",
   "scripts": {
     "clean": "rimraf dist && rimraf test-reports",
     "banners": "node scripts/maintain-banners.js",
