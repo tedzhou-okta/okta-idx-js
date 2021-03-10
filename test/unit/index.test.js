@@ -9,6 +9,8 @@ import idx from '../../src/index';
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 const mockRequestIdentity = require('../mocks/request-identifier');
+const mockErrorResponse = require('../mocks/error-response');
+const mockAuthenticatorErrorResponse = require('../mocks/error-authenticator-enroll');
 const { Response } = jest.requireActual('cross-fetch');
 
 fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockRequestIdentity )) ) );
@@ -113,6 +115,42 @@ describe('idx-js', () => {
         .catch( err => { 
           expect( err ).toEqual( { error: new Error('Unknown api version: 999999.9999.9999.  Use an exact semver version.') });
           expect( fetch ).not.toHaveBeenCalled();
+        });
+    });
+
+    it('returns an idxState when a generic error occurs during introspect', async () => {
+      fetch.mockImplementationOnce( () => Promise.resolve( new Response(JSON.stringify( mockErrorResponse ), { status: 500 }) ) );
+
+      return idx.start({ domain, stateHandle, version })
+        .then( () => {
+          fail('expected idx.start to reject when not given a wrong version');
+        })
+        .catch( ( { error } ) => {
+          expect(error.details).toBeDefined();
+          expect(error.details.context).toBeDefined();
+          expect(typeof error.details.proceed).toBe('function');
+          expect(error.details.neededToProceed).toEqual([]);
+          expect(error.details.rawIdxState).toStrictEqual(mockErrorResponse);
+          expect(error.error).toEqual('introspect call failed');
+        });
+    });
+
+    it('returns an idxState when an authenticator error occurs during introspect', async () => {
+      fetch.mockImplementationOnce( () => Promise.resolve(
+        new Response(JSON.stringify( mockAuthenticatorErrorResponse ), { status: 403 }) ),
+      );
+
+      return idx.start({ domain, stateHandle, version })
+        .then( () => {
+          fail('expected idx.start to reject when not given a wrong version');
+        })
+        .catch( ( { error } ) => {
+          expect(error.details).toBeDefined();
+          expect(error.details.context).toBeDefined();
+          expect(typeof error.details.proceed).toBe('function');
+          expect(error.details.neededToProceed).toHaveLength(1);
+          expect(error.details.rawIdxState).toBeDefined();
+          expect(error.error).toEqual('introspect call failed');
         });
     });
 

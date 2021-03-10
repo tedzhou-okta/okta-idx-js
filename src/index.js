@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2020-Present, Okta, Inc. and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021-Present, Okta, Inc. and/or its affiliates. All rights reserved.
  * The Okta software accompanied by this notice is provided pursuant to the Apache License, Version 2.0 (the "License.")
  *
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
@@ -91,7 +91,12 @@ const start = async function start({
   try {
     const { makeIdxState } = parsersForVersion(version);
     const idxResponse = await introspect({ domain, interactionHandle, stateHandle, version })
-      .catch( err => Promise.reject({ error: 'introspect call failed', details: err }) );
+      .catch( err => Promise.reject({
+        error: 'introspect call failed',
+        // Transform all errors into an IdX State object.
+        // This allows IdX based errors (messages) to optionally proceed with remediation forms
+        details: makeIdxState( err, toPersist )
+      }) );
     const idxState = makeIdxState( idxResponse, toPersist );
     return idxState;
   } catch (error) {
