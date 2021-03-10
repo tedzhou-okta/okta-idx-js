@@ -13,7 +13,7 @@ const firstYear = match[2];
 const currentYear = new Date().getFullYear().toString();
 
 if (firstYear !== currentYear) {
-  fs.writeFileSync(bannerSourcePath, bannerSource.replace(copyrightRegex, `$1$2-${currentYear}`));
+  fs.writeFileSync(bannerSourcePath, bannerSource.replace(copyrightRegex, `$1${currentYear}-`));
 }
 
 files.forEach(file => {
@@ -24,6 +24,6 @@ files.forEach(file => {
   }
   const firstYear = match[2];
   if (firstYear !== currentYear) {
-    return fs.writeFileSync(file, contents.replace(copyrightRegex, `$1$2-${currentYear}`));
+    return fs.writeFileSync(file, contents.replace(copyrightRegex, `$1${currentYear}-`));
   }
 });
