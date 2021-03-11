@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2020-Present, Okta, Inc. and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020-2021Present, Okta, Inc. and/or its affiliates. All rights reserved.
  * The Okta software accompanied by this notice is provided pursuant to the Apache License, Version 2.0 (the "License.")
  *
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
@@ -17,6 +17,7 @@ import parsersForVersion from './parsers';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
+console.log('REMOVE ME!!!');
 const start = async function start({
   clientId,
   domain,
