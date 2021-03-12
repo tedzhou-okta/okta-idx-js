@@ -1,3 +1,9 @@
+# 0.11.0
+
+### Features
+
+- [#49](https://github.com/okta/okta-idx-js/pull/49) Transforms `introspect` errors into a recoverable `idxState`
+
 # 0.10.0
 
 ### Other
