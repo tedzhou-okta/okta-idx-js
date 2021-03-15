@@ -1,5 +1,7 @@
 # 0.13.0
-- 
+
+### Fixes
+- [#52](https://github.com/okta/okta-idx-js/pull/52) Updates bundling to prevent CSP 'eval' issues
 
 # 0.12.0
 
