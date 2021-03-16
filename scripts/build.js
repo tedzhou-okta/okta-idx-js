@@ -5,17 +5,12 @@ const chalk = require('chalk');
 const fs = require('fs');
 
 const NPM_DIR = `dist`;
-const BUNDLE_CMD = 'yarn bundle';
 const BANNER_CMD = `yarn banners`;
+const TRANSPILE_CMD = `yarn transpile`;
 
 shell.echo(`Start building...`);
 
 shell.rm(`-Rf`, `${NPM_DIR}/*`);
-
-if (shell.exec(BUNDLE_CMD).code !== 0) {
-  shell.echo(chalk.red(`Error: Bundling failed`));
-  shell.exit(1);
-}
 
 // Maintain banners
 if (shell.exec(BANNER_CMD).code !== 0) {
@@ -23,7 +18,11 @@ if (shell.exec(BANNER_CMD).code !== 0) {
   shell.exit(1);
 }
 
-shell.echo(chalk.green(`Bundling completed`));
+// Transpile ES module source
+if (shell.exec(TRANSPILE_CMD).code !== 0) {
+  shell.echo(chalk.red(`Error: Babel transpile failed`));
+  shell.exit(1);
+}
 
 shell.cp(`-Rf`, [`package.json`, `LICENSE`, `*.md`], `${NPM_DIR}`);
 
@@ -35,7 +34,7 @@ delete packageJSON.jest; // remove jest section
 delete packageJSON['jest-junit']; // remove jest-junit section
 delete packageJSON.workspaces; // remove yarn workspace section
 
-// Remove "build/" from the entrypoint paths.
+// Remove "dist/" from the entrypoint paths.
 ['main', 'module', 'types'].forEach(function(key) {
   if (packageJSON[key]) { 
     packageJSON[key] = packageJSON[key].replace(`${NPM_DIR}/`, '');
@@ -44,4 +43,4 @@ delete packageJSON.workspaces; // remove yarn workspace section
 
 fs.writeFileSync(`./${NPM_DIR}/package.json`, JSON.stringify(packageJSON, null, 4));
 
-shell.echo(chalk.green(`End building`));
+shell.echo(chalk.green(`Build completed`));
