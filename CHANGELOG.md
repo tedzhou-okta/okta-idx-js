@@ -1,3 +1,9 @@
+# 0.14.0
+
+### Features
+
+- [#54](https://github.com/okta/okta-idx-js/pull/54) Adds the ability to pass in HTTP request interceptors
+
 # 0.13.0
 
 ### Fixes

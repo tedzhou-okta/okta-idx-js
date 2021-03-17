@@ -11,10 +11,9 @@
  */
 
 
-import fetch from 'cross-fetch';
-import { userAgentHeaders } from './userAgent';
+import { request } from './client';
 
-const parseAndReject = response =>  response.json().then( err => Promise.reject(err));
+const parseAndReject = response => response.json().then( err => Promise.reject(err) );
 
 const bootstrap = async function bootstrap({
   clientId,
@@ -23,7 +22,7 @@ const bootstrap = async function bootstrap({
   redirectUri,
   codeChallenge,
   codeChallengeMethod,
-  state
+  state,
 }) {
 
   const target = `${baseUrl}/v1/interact`;
@@ -37,16 +36,12 @@ const bootstrap = async function bootstrap({
   })
     .map( ([param, value]) => `${param}=${encodeURIComponent(value)}` )
     .join('&');
+  const headers = {
+    'content-type': 'application/x-www-form-urlencoded',
+  };
 
-  return fetch(target, {
-    method: 'POST',
-    headers: {
-      ...userAgentHeaders(),
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-    body,
-  })
-    .then( response => response.ok ? response.json() : parseAndReject(response) )
+  return request(target, { headers, body })
+    .then( response => response.ok ? response.json() : parseAndReject( response ) )
     .then( data => data.interaction_handle);
 };
 

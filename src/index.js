@@ -14,6 +14,7 @@
 import introspect from './introspect';
 import bootstrap from './bootstrap';
 import parsersForVersion from './parsers';
+import { HttpClient } from './client';
 
 const LATEST_SUPPORTED_IDX_API_VERSION = '1.0.0';
 
@@ -106,5 +107,6 @@ const start = async function start({
 
 export default {
   start,
+  client: HttpClient,
   LATEST_SUPPORTED_IDX_API_VERSION,
 };
