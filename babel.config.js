@@ -1,6 +1,4 @@
-// This file now only exists to allow linting
-// This file should be removed once linting is set to use the values
-// from webpack.config.js
+const SDK_VERSION = require('./package.json').version;
 module.exports = {
   presets: [[ '@babel/env', {
     // targets or browserlist recommended per babel-preset-env docs
@@ -18,6 +16,9 @@ module.exports = {
     ['@babel/plugin-transform-runtime', {
       corejs: 3,
       proposals: true, // required for proposal polyfills
+    }],
+    ['inline-replace-variables', {
+      'SDK_VERSION': SDK_VERSION
     }]
   ],
 };
