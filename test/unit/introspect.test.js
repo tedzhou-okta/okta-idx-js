@@ -1,5 +1,5 @@
 import introspect from '../../src/introspect';
-
+import { HttpClient } from '../../src/client';
 jest.mock('cross-fetch');
 import fetch from 'cross-fetch'; // import to target for mockery
 
@@ -12,6 +12,10 @@ let stateHandle = 'FAKEY-FAKE';
 let version = '1.0.0';
 
 describe('introspect', () => {
+  afterEach(() => {
+    HttpClient.interceptors.request.clear();
+  });
+
   it('returns an idxResponse on success', async () => {
     fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
     return introspect({ domain, stateHandle, version })
@@ -37,7 +41,7 @@ describe('introspect', () => {
       });
   });
 
-  it('sends the version along', async () => {
+  it('sends the SDK version as a custom header', async () => {
     fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
     return introspect({ domain, stateHandle, version })
       .then( result => {
@@ -49,6 +53,32 @@ describe('introspect', () => {
             'content-type': 'application/ion+json; okta-version=1.0.0',
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
+          },
+          method: "POST"
+        });
+      });
+  });
+
+  it('allows consumers of the library to pass in custom headers', async () => {
+    fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
+
+    HttpClient.interceptors.request.use( (config) => {
+      // Rewrite headers
+      config.headers['X-Test-Header'] = 'foo';
+      config.headers['X-Okta-User-Agent-Extended'] = 'my-sdk-value';
+    });
+
+    return introspect({ domain, stateHandle, version })
+      .then( result => {
+        expect( fetch.mock.calls.length ).toBe(1);
+        expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/idp/idx/introspect' );
+        expect( fetch.mock.calls[0][1] ).toEqual( {
+          body: '{"stateToken":"FAKEY-FAKE"}',
+          headers: {
+            'content-type': 'application/ion+json; okta-version=1.0.0',
+            'accept': 'application/ion+json; okta-version=1.0.0',
+            'X-Test-Header': 'foo',
+            'X-Okta-User-Agent-Extended': 'my-sdk-value',
           },
           method: "POST"
         });

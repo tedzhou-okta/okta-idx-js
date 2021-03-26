@@ -18,11 +18,9 @@ This repository contains the Okta IDX SDK for Javascript.  Currently focused on 
 * [Usage](#usage)
 * [Contributing](#contributing)
 
-
 This library is intended to ease JS-based integration with the Okta Identity Engine (OIE) making use if the Okta Identity Experience (IDX) API.  This library wraps the sequence of calls to the Okta IDX endpoints so that the consumer doesn't have to parse the entirety of each response, nor manage XHR calls.
 
 Though this library exposes the metadata needed to generate a UI to gather needed data and select between available options, the consumer is responsible for interpeting and acting on that metadata - idx-js is focused on sending passed data to the appropriate endpoint for the selected actions only.
-
 
 ## Release status
 
@@ -35,9 +33,9 @@ This library uses semantic versioning and follows Okta's [Library Version Policy
 The latest release can always be found on the [releases page][github-releases].
 
 ## Need help?
- 
+
 If you run into problems using the SDK, you can
- 
+
 * Ask questions on the [Okta Developer Forums][devforum]
 * Post [issues][github-issues] here on GitHub (for code errors)
 
@@ -51,11 +49,11 @@ You will need:
 
 ## Installation
 
-```
+```sh
+# npm
 npm install @okta/okta-idx-js
-```
-or
-```
+
+# yarn
 yarn install @okta/okta-idx-js
 ```
 
@@ -65,7 +63,7 @@ idx-js is compatible with node 12+
 
 idx-js uses ES module syntax:
 
-```
+```js
 import idx from `@okta/okta-idx-js`;
 ```
 
@@ -86,7 +84,7 @@ Configuration params:
 
 `idx.start()` is called anytime you don't have an idxState object (such as after a browser full-page redirect) and will resume any OIE flow in-progress based on the passed **interactionHandle** (customer-hosted)
 
-```
+```js
 let idxState;
 try { 
   idxState = await idx.start({ issuer, clientId, redirectUri, version, codeChallenge, codeChallengeMethod });
@@ -98,7 +96,8 @@ try {
 
 ### General Usage
 
-The happy path for idx-js is
+The happy path for idx-js is:
+
 - Calling `idx.start()` initially to get an `idxState`
 - Inspecting the `idxState.neededToProceed` array to see what data to send
   - use the `idxState.context` object for any additional information to display
@@ -110,8 +109,31 @@ The happy path for idx-js is
 - Exchange the `interactionCode` to obtain tokens.  This is outside idx-js, but can be done with (for example) okta-auth-js `token.exchangeCodeForTokens(...)`
 
 The less-than-happy paths include these options:
+
 - Canceling the flow: Actions that don't result in a new (usable) idxState are collected into an object of functions, `idxState.actions`
-- Something complicated: `idxState.rawIdxResponse` gives you access to the uninterpreted response 
+- Something complicated: `idxState.rawIdxResponse` gives you access to the uninterpreted response
+
+### Interceptors
+
+#### Request
+
+To read, modify, or perform additional logic before a HTTP request is performed, add a custom interceptor:
+
+```js
+idx.client.interceptors.request.use(requestConfig => {
+  // Add a custom header to the request
+  requestConfig.headers['X-Custom-Header'] = 'my-custom-header';
+  return requestConfig;
+});
+```
+
+#### Clear
+
+Clear all attached interceptors.
+
+```js
+idx.client.interceptors.request.clear();
+```
 
 ### idxState Methods and Properties
 
@@ -120,12 +142,14 @@ The less-than-happy paths include these options:
 `proceed()` is called to move forward to the next step of authentication.
 
 `proceed()` returns a promise that resolves to a new idxState.
+
 - `remediationChoice` is the name of the corresponding entry in `neededToProceed` (note that any actions that can't be called with `proceed`, such as full-page redirects, are not valid remediationChoices)
 - `params` is an object of key/value pairs for data (matching the list in `neededToProceed` Ion entry)
 
 #### idxState.neededToProceed
 
 `neededToProceed` is an array of objects, with each object having:
+
 - a `.name` property that will be used as a `remediationChoice` for calling `proceed()`
 - a `.value` property that is an array of Ion-based descriptions of the values to pass to `proceed()`
 - Other properties may be internal or dropped in later iterations (TODO: Confirm and implement)
@@ -133,6 +157,7 @@ The less-than-happy paths include these options:
 #### idxState.context
 
 `context` is an object of any metadata values about the current state of the IDX request and/or potential remediations.  Possible properties within this object include:
+
 - `expiresAt` - When the current stateHandle expires
 - `intent` - The intent (e.g. "LOGIN") of the IDX flow
 - `user` - Information about the user currently in the flow
@@ -146,6 +171,7 @@ The less-than-happy paths include these options:
 #### idxState.actions
 
 `actions` is an object of functions that do not return a new idxState, but can still be called as background (XHR) requests.  Potential actions include:
+
 - `actions.cancel()` - Cancels the current authentication flow
 - actions involving factor resets (e.g. forgotten passwords)
 - actions involving WebAuthN interactions (TODO: Confirm flows)
@@ -163,16 +189,16 @@ The less-than-happy paths include these options:
 `rawIdxResponse` is an object containing the raw Ion response.  It is included to cover the uncommon cases that idx-js doesn't serve well, but the goal is to minimize the need and use of it, as any useful information should be more easily obtained in `.neededToProceed`, `.actions`, or `.context`.
 
 ## Contributing
- 
+
 We are happy to accept contributions and PRs! Please see the [contribution guide](CONTRIBUTING.md) to understand how to structure a contribution.
 
 ### Running tests
 
-Create a `.env` file with the below or set the same environment variables: 
-```
+Create a `.env` file with the below or set the same environment variables:
+
+```sh
 ISSUER_URL=https://{yourOktaDomain}
 CLIENT_ID={clientId}
 REDIRECT_URI=http://localhost:8080/implicit/callback
 USER_IDENTIFIER={userEmailAddress}
 ```
-

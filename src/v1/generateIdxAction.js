@@ -11,23 +11,23 @@
  */
 
 
-import fetch from 'cross-fetch';
+import { request } from '../client';
 import { divideActionParamsByMutability } from './actionParser';
-import { userAgentHeaders } from '../userAgent';
 import makeIdxState from './makeIdxState';
 
 const generateDirectFetch = function generateDirectFetch( { actionDefinition, defaultParamsForAction = {}, immutableParamsForAction = {}, toPersist } ) {
   const target = actionDefinition.href;
   return async function(params) {
-    return fetch(target, {
-      method: actionDefinition.method,
-      headers: {
-        ...userAgentHeaders(),
-        'content-type': 'application/json',
-        'accept': actionDefinition.accepts || 'application/ion+json',
-      },
-      body: JSON.stringify({ ...defaultParamsForAction, ...params, ...immutableParamsForAction })
-    })
+    const headers = {
+      'content-type': 'application/json',
+      'accept': actionDefinition.accepts || 'application/ion+json',
+    };
+    const body = JSON.stringify({
+      ...defaultParamsForAction,
+      ...params,
+      ...immutableParamsForAction
+    });
+    return request(target, { method: actionDefinition.method, headers, body })
       .then( response => {
         const respJson = response.json();
         if (response.ok) {
