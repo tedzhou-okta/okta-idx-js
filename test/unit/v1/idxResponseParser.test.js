@@ -2,7 +2,7 @@ import { parseNonRemediations, parseIdxResponse } from '../../../src/v1/idxRespo
 
 const mockIdxResponse = require('../../mocks/challenge-password');
 const mockAuthenticatorVerificationSelectAuthenticator = require('../../mocks/authenticator-verification-select-authenticator');
-const mockAuthenticatorVerificationPassword= require('../../mocks/authenticator-verification-password');
+const mockAuthenticatorVerificationPassword = require('../../mocks/authenticator-verification-password');
 const mockSmallIdxResponse = require('../../mocks/request-identifier');
 const mockComplexContextIdxResponse = require('../../mocks/poll-for-password');
 const mockTerminalIdxResponse = require('../../mocks/terminal-return-email');

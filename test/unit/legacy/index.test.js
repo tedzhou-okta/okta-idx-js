@@ -56,7 +56,7 @@ describe('idx-js', () => {
         .then( () => {
           fail('expected idx.start to reject when not given a wrong version');
         })
-        .catch( err => { 
+        .catch( err => {
           expect( err ).toEqual( { error: new Error('Unknown api version: 999999.9999.9999.  Use an exact semver version.') });
           expect( fetch ).not.toHaveBeenCalled();
         });

@@ -33,7 +33,7 @@ describe('request', () => {
       config.headers = { 'foo': 'bar' };
       config.method = 'GET';
       config.body = 'body value';
-    }
+    };
 
     HttpClient.interceptors.request.use(interceptor);
 
@@ -57,7 +57,7 @@ describe('request', () => {
     const interceptor = (config) => {
       // Rewrite config by reference
       config.url = 'changed';
-    }
+    };
 
     HttpClient.interceptors.request.use(interceptor);
 

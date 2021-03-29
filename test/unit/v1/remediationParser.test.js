@@ -1,7 +1,7 @@
 import { generateRemediationFunctions } from '../../../src/v1/remediationParser';
 
 // imports to target for mockery
-import fetch from 'cross-fetch'; 
+import fetch from 'cross-fetch';
 import generateIdxAction from '../../../src/v1/generateIdxAction';
 
 jest.mock('cross-fetch');

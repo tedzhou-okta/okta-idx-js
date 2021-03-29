@@ -28,62 +28,62 @@ const codeChallengeMethod = 'S256';
 describe('idx-js', () => {
   describe('start', () => {
 
-    it('requires a clientId when there is no stateHandle', async () => { 
+    it('requires a clientId when there is no stateHandle', async () => {
       return idx.start({ domain, version, redirectUri })
-        .then( () => { 
+        .then( () => {
           fail('expected idx.start to reject without one of: clientId, stateHandle');
         })
-        .catch( err => { 
+        .catch( err => {
           expect(err).toStrictEqual({ error: 'clientId is required' });
         });
     });
 
-    it('requires a redirectUri when there is no stateHandle', async () => { 
+    it('requires a redirectUri when there is no stateHandle', async () => {
       return idx.start({ domain, clientId, version })
-        .then( () => { 
+        .then( () => {
           fail('expected idx.start to reject without one of: redirectUri, stateHandle');
         })
-        .catch( err => { 
+        .catch( err => {
           expect(err).toStrictEqual({ error: 'redirectUri is required' });
         });
     });
 
-    it('requires PKCE attributes when there is no stateHandle', async () => { 
+    it('requires PKCE attributes when there is no stateHandle', async () => {
       return idx.start({ domain, clientId, version, redirectUri })
-        .then( () => { 
+        .then( () => {
           fail('expected idx.start to reject without PKCE params if no stateHandle');
         })
-        .catch( err => { 
+        .catch( err => {
           expect(err).toStrictEqual({ error: 'PKCE params (codeChallenge, codeChallengeMethod) are required' });
         });
     });
 
-    it('handles updating the baseUrl for an org authorization server issuer', async () => { 
+    it('handles updating the baseUrl for an org authorization server issuer', async () => {
       return idx.start({ issuer: `${orgIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
         .then( idxState => {
           expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
         });
     });
 
-    it('accepts the baseUrl from a custom authorization server issuer', async () => { 
+    it('accepts the baseUrl from a custom authorization server issuer', async () => {
       return idx.start({ issuer: `${customIssuer}`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
         .then( idxState => {
           expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
         });
     });
-    
+
     it('handles an org AS issuer with a trailing slash', async () => {
       return idx.start({ issuer: `${orgIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
         .then( idxState => {
           expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2');
-        })
+        });
     });
 
     it('handles a custom AS issuer with a trailing slash', async () => {
       return idx.start({ issuer: `${customIssuer}/`, clientId, version, redirectUri, codeChallenge, codeChallengeMethod })
         .then( idxState => {
           expect(idxState.toPersist.baseUrl).toEqual('http://okta.example.com/oauth2/default');
-        })
+        });
     });
 
     it('rejects if there is no domain or issuer', async () => {
@@ -112,7 +112,7 @@ describe('idx-js', () => {
         .then( () => {
           fail('expected idx.start to reject when not given a wrong version');
         })
-        .catch( err => { 
+        .catch( err => {
           expect( err ).toEqual( { error: new Error('Unknown api version: 999999.9999.9999.  Use an exact semver version.') });
           expect( fetch ).not.toHaveBeenCalled();
         });
