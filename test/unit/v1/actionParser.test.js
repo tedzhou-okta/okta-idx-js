@@ -2,18 +2,18 @@ import { divideActionParamsByMutability } from '../../../src/v1/actionParser';
 
 const mockIdxResponse = require('../../mocks/request-identifier');
 
-describe('actionParser', () => { 
+describe('actionParser', () => {
   describe('divideActionParamsByMutability', () => {
 
     it('parses and splits multiple remediations', async () => {
       const { defaultParams, neededParams, immutableParams } = divideActionParamsByMutability( mockIdxResponse.remediation.value );
 
       expect( defaultParams ).toEqual({
-        identify: {}, 
-        "select-enroll-profile": {},
+        identify: {},
+        'select-enroll-profile': {},
       });
 
-      expect( neededParams ).toEqual([[{"label": "Username", "name": "identifier"}], []]);
+      expect( neededParams ).toEqual([[{'label': 'Username', 'name': 'identifier'}], []]);
 
       expect( immutableParams ).toEqual({
         identify: {stateHandle: '02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw'},

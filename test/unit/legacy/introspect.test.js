@@ -40,7 +40,7 @@ describe('introspect', () => {
   it('sends the version along', async () => {
     fetch.mockImplementation( () => Promise.resolve( new Response(JSON.stringify( mockIdxResponse )) ) );
     return introspect({ domain, stateHandle, version })
-      .then( result => {
+      .then( () => {
         expect( fetch.mock.calls.length ).toBe(1);
         expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/idp/idx/introspect' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
@@ -50,7 +50,7 @@ describe('introspect', () => {
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
       });
   });

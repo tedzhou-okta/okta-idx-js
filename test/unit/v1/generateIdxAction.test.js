@@ -9,7 +9,7 @@ const deepClone = ( target ) => JSON.parse(JSON.stringify( target ));
 const mockResponse = ( respondWith ) => Promise.resolve( new Response( JSON.stringify( respondWith) ) );
 
 // import targets for mockery
-import fetch from 'cross-fetch'; 
+import fetch from 'cross-fetch';
 import makeIdxState from '../../../src/v1/makeIdxState';
 
 jest.mock('cross-fetch');
@@ -25,7 +25,7 @@ jest.mock('../../../src/v1/makeIdxState', () => {
   });
 });
 
-describe('generateIdxAction', () => { 
+describe('generateIdxAction', () => {
   it('builds a function', () => {
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     expect(typeof actionFunction).toBe('function');
@@ -39,16 +39,16 @@ describe('generateIdxAction', () => {
       .then( result => {
         expect( fetch.mock.calls.length ).toBe(1);
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
-        expect( fetch.mock.calls[0][1] ).toEqual( { 
+        expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
-          headers: { 
+          headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
-        expect( result ).toBe('mock IdxState')
+        expect( result ).toBe('mock IdxState');
       });
   });
 
@@ -60,7 +60,7 @@ describe('generateIdxAction', () => {
     makeIdxState.mockReturnValue('mock IdxState');
     const actionFunction = generateIdxAction(mockIdxResponse.remediation.value[0]);
     return actionFunction()
-      .then( result => { 
+      .then( result => {
         fail('mock call should have failed', result);
       })
       .catch( result => {
@@ -73,39 +73,39 @@ describe('generateIdxAction', () => {
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
-        expect( result ).toBe('mock IdxState')
+        expect( result ).toBe('mock IdxState');
       });
   });
 
-  it('sends pre-filled default field values', async () => { 
+  it('sends pre-filled default field values', async () => {
     fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
 
     const mockRemediationWithValue = deepClone(mockIdxResponse.remediation.value[0]);
     expect(mockRemediationWithValue.value[0].name).toBe('identifier');
-    mockRemediationWithValue.value[0].value = "A_DEFAULT";
+    mockRemediationWithValue.value[0].value = 'A_DEFAULT';
 
     const actionFunction = generateIdxAction(mockRemediationWithValue);
     return actionFunction({ })
-      .catch( result => { 
+      .catch( result => {
         fail('mock fetch failed', result);
       })
-      .then( result => { 
-        expect( fetch.mock.calls[0][1] ).toEqual( { 
+      .then( () => {
+        expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
       });
   });
 
-  it('does not allow overridding immutable fields', async () => { 
+  it('does not allow overridding immutable fields', async () => {
     fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
     const mockRemediationWithImmutableValue = deepClone(mockIdxResponse.remediation.value[0]);
@@ -114,53 +114,53 @@ describe('generateIdxAction', () => {
 
     const actionFunction = generateIdxAction(mockRemediationWithImmutableValue);
     return actionFunction({ stateHandle: 'SHOULD_NOT_CHANGE' })
-      .catch( result => { 
+      .catch( result => {
         fail('mock fetch failed', result);
       })
-      .then( result => { 
-        expect( fetch.mock.calls[0][1] ).toEqual( { 
+      .then( () => {
+        expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
       });
   });
 
-  it('does allow overridding mutable values', async () => { 
+  it('does allow overridding mutable values', async () => {
     fetch.mockImplementationOnce( () => mockResponse( mockIdxResponse ));
     makeIdxState.mockReturnValue('mock IdxState');
 
     const mockRemediationWithMutableValue = JSON.parse(JSON.stringify(mockIdxResponse.remediation.value[0]));
     expect(mockRemediationWithMutableValue.value[0].name).toBe('identifier');
     expect(mockRemediationWithMutableValue.value[0].mutable).not.toBe(false);
-    mockRemediationWithMutableValue.value[0].value = "SHOULD_CHANGE";
+    mockRemediationWithMutableValue.value[0].value = 'SHOULD_CHANGE';
 
     const actionFunction = generateIdxAction(mockRemediationWithMutableValue);
     return actionFunction({ identifier: 'WAS_CHANGED' })
-      .catch( result => { 
+      .catch( result => {
         fail('mock fetch failed', result);
       })
-      .then( result => { 
-        expect( fetch.mock.calls[0][1] ).toEqual( { 
+      .then( () => {
+        expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
-          method: "POST"
+          method: 'POST'
         });
       });
   });
 
 
   // TODO: Conditions to decide if polling is finished are being discussed
-  xit('generates a polling function when appropriate', () => { 
-    const pollingFunction = generateIdxAction( mockPollingIdxResponse.factor.value.poll );
+  xit('generates a polling function when appropriate', () => {
+    generateIdxAction( mockPollingIdxResponse.factor.value.poll );
     fail('not done yet');
   });
 });

@@ -38,7 +38,7 @@ describe('bootstrap', () => {
     });
 
     return bootstrap({ ...mockConfig })
-      .then( result => {
+      .then( () => {
         expect( fetch.mock.calls.length ).toBe(1);
         expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/v1/interact' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
@@ -48,7 +48,7 @@ describe('bootstrap', () => {
             'X-Test-Header': 'foo',
             'X-Okta-User-Agent-Extended': 'my-sdk-value',
           },
-          method: "POST"
+          method: 'POST'
         });
       });
   });
