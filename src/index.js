@@ -104,9 +104,11 @@ const start = async function start({
     return Promise.reject({ error });
   }
 };
+const { makeIdxState } = parsersForVersion(LATEST_SUPPORTED_IDX_API_VERSION);
 
 export default {
   start,
+  makeIdxState,
   client: HttpClient,
   LATEST_SUPPORTED_IDX_API_VERSION,
 };
