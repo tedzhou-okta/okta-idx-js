@@ -202,4 +202,3 @@ CLIENT_ID={clientId}
 REDIRECT_URI=http://localhost:8080/implicit/callback
 USER_IDENTIFIER={userEmailAddress}
 ```
-
