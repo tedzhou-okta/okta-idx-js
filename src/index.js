@@ -108,6 +108,8 @@ const { makeIdxState } = parsersForVersion(LATEST_SUPPORTED_IDX_API_VERSION);
 
 export default {
   start,
+  introspect,
+  interact: bootstrap,
   makeIdxState,
   client: HttpClient,
   LATEST_SUPPORTED_IDX_API_VERSION,
