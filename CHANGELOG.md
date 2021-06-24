@@ -1,3 +1,11 @@
+# 0.18.0
+
+### Other
+
+- [#67](https://github.com/okta/okta-idx-js/pull/67)
+  - Moves `core-js` to dependencies
+  - Replaces `jsonpath` to `jsonpath-plus` to get better esm support and smaller bundle size
+
 # 0.17.0
 
 ### Features
