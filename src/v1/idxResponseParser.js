@@ -72,6 +72,7 @@ const expandRelatesTo = (idxResponse, value) => {
     if (k === 'relatesTo') {
       const query = Array.isArray(value[k]) ? value[k][0] : value[k];
       if (typeof query === 'string') {
+        // eslint-disable-next-line new-cap
         const result = JSONPath({ path: query, json: idxResponse })[0];
         if (result) {
           value[k] = result;
