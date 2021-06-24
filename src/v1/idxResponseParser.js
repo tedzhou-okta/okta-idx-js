@@ -73,7 +73,6 @@ const expandRelatesTo = (idxResponse, value) => {
       const query = Array.isArray(value[k]) ? value[k][0] : value[k];
       if (typeof query === 'string') {
         const result = JSONPath({ path: query, json: idxResponse })[0];
-        // const result = jsonPath.query(idxResponse, query)[0];
         if (result) {
           value[k] = result;
           return;
