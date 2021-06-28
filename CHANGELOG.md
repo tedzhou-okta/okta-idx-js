@@ -1,3 +1,15 @@
+# 0.17.0
+
+### Features
+
+- [#61](https://github.com/okta/okta-idx-js/pull/61) Exposes interact and introspect methods
+
+# 0.16.0
+
+### Features
+
+- [#57](https://github.com/okta/okta-idx-js/pull/57) Exposes makeIdxState method
+
 # 0.14.0
 
 ### Features
