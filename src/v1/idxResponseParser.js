@@ -13,7 +13,7 @@
 
 import { generateRemediationFunctions } from './remediationParser';
 import generateIdxAction from './generateIdxAction';
-import jsonPath from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 
 const SKIP_FIELDS = Object.fromEntries([
   'remediation', // remediations are put into proceed/neededToProceed
@@ -72,7 +72,8 @@ const expandRelatesTo = (idxResponse, value) => {
     if (k === 'relatesTo') {
       const query = Array.isArray(value[k]) ? value[k][0] : value[k];
       if (typeof query === 'string') {
-        const result = jsonPath.query(idxResponse, query)[0];
+        // eslint-disable-next-line new-cap
+        const result = JSONPath({ path: query, json: idxResponse })[0];
         if (result) {
           value[k] = result;
           return;
