@@ -54,6 +54,7 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
@@ -81,6 +82,7 @@ describe('generateIdxAction', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://dev-550580.okta.com/idp/idx/identify' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
@@ -108,6 +110,7 @@ describe('generateIdxAction', () => {
       .then( () => {
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"identifier":"A_DEFAULT","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
@@ -133,6 +136,7 @@ describe('generateIdxAction', () => {
       .then( () => {
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',
@@ -160,6 +164,7 @@ describe('generateIdxAction', () => {
       .then( () => {
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"identifier":"WAS_CHANGED","stateHandle":"02Yi84bXNZ3STdPKisJIV0vQ7pY4hkyFHs6a9c12Fw"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/json',
             'accept': 'application/ion+json; okta-version=1.0.0',

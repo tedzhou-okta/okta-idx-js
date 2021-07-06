@@ -56,6 +56,7 @@ describe('bootstrap', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/v1/interact' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: 'client_id=CLIENT_ID&scope=openid%20email&redirect_uri=redirect%3A%2F%2F&code_challenge=foo&code_challenge_method=method&state=undefined',
+          credentials: 'include',
           headers: {
             'content-type': 'application/x-www-form-urlencoded',
             'X-Test-Header': 'foo',
