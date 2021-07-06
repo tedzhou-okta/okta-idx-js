@@ -45,7 +45,7 @@ const HttpClient = {
   },
 };
 
-const request = async function request( target, { method = 'POST', headers = {}, body } ) {
+const request = async function request( target, { method = 'POST', headers = {}, credentials = 'include', body } ) {
   const requestOptions = {
     url: target,
     method,
@@ -53,6 +53,7 @@ const request = async function request( target, { method = 'POST', headers = {},
       ...userAgentHeaders(),
       ...headers,
     },
+    credentials,
     body,
   };
 

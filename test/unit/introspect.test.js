@@ -62,6 +62,7 @@ describe('introspect', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/idp/idx/introspect' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateToken":"FAKEY-FAKE"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/ion+json; okta-version=1.0.0',
             'accept': 'application/ion+json; okta-version=1.0.0',
@@ -87,6 +88,7 @@ describe('introspect', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'http://okta.example.com/idp/idx/introspect' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: '{"stateToken":"FAKEY-FAKE"}',
+          credentials: 'include',
           headers: {
             'content-type': 'application/ion+json; okta-version=1.0.0',
             'accept': 'application/ion+json; okta-version=1.0.0',

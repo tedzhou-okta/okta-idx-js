@@ -29,6 +29,7 @@ describe('request', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://example.com' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: 'foo=bar',
+          credentials: 'include',
           headers: {
             'X-Okta-User-Agent-Extended': `okta-idx-js/${SDK_VERSION}`,
           },
@@ -56,6 +57,7 @@ describe('request', () => {
         expect( fetch.mock.calls[0][0] ).toEqual( 'https://okta.com' );
         expect( fetch.mock.calls[0][1] ).toEqual( {
           body: 'body value',
+          credentials: 'include',
           headers: {
             'foo': 'bar',
           },
