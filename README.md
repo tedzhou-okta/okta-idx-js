@@ -4,12 +4,14 @@
 [github-issues]: https://github.com/okta/okta-idx-js/issues
 [github-releases]: https://github.com/okta/okta-idx-js/releases
 [okta-library-versioning]: https://developer.okta.com/code/library-versions/
+[okta-auth-js]: https://github.com/okta/okta-auth-js
+[okta-signin-widget]: https://github.com/okta/okta-signin-widget
 
-This repository contains the Okta IDX SDK for Javascript.  Currently focused on browser-based interactions, but server-side functionality is available.
+> :warning: Okta recommends against integrating directly with this module. Developers wishing to use IDX APIs in an end-to-end flow should use the [Okta AuthJS][okta-auth-js] SDK instead. See the guide: [Using IDX with AuthJS](https://github.com/okta/okta-auth-js/blob/master/docs/idx.md).
 
-> :grey_exclamation:  The use of this SDK requires usage of the Okta Identity Engine. This functionality is in general availability but is being gradually rolled out to customers. If you want to request to gain access to the Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
+> :grey_exclamation:  The use of this SDK requires usage of the Okta Identity Engine. If you want to request to gain access to the Okta Identity Engine, please reach out to your account manager. If you do not have an account manager, please reach out to oie@okta.com for more information.
 
-> :warning: Beta alert! This library is in beta. See [release status](#release-status) for more information.
+`okta-idx-js` is a low-level protocol library used internally by [Okta AuthJS][okta-auth-js] and the [Okta Signin Widget][okta-signin-widget] to parse responses from the IDX API. This library does not contain any OAuth/PKCE code and cannot retrieve tokens.
 
 * [Release status](#release-status)
 * [Need help?](#need-help)
