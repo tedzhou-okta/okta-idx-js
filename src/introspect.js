@@ -15,13 +15,13 @@ import { request } from './client';
 
 const parseAndReject = response => response.json().then( err => Promise.reject(err) );
 
-const introspect = async function introspect({ domain, interactionHandle, stateHandle, version }) {
+const introspect = async function introspect({ domain, interactionHandle, stateHandle, version, headers, extraPayload }) {
   const target = `${domain}/idp/idx/introspect`;
-  const body = stateHandle ? { stateToken: stateHandle } : { interactionHandle };
-  const headers = {
-    'content-type': `application/ion+json; okta-version=${version}`, // Server wants this version info
-    accept: `application/ion+json; okta-version=${version}`,
-  };
+  const body = stateHandle ? { stateToken: stateHandle, extraPayload } : { interactionHandle, extraPayload };
+  headers = headers || {};
+  headers['ted-test-header'] = 'wow/works!';
+  headers['content-type'] = `application/ion+json; okta-version=${version}`; // Server wants this version info
+  headers['accept'] = `application/ion+json; okta-version=${version}`;
 
   return request(target, { headers, body: JSON.stringify(body) })
     .then( response => response.ok ? response.json() : parseAndReject( response ) );
