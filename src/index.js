@@ -30,6 +30,8 @@ const start = async function start({
   scopes,
   codeChallenge,
   codeChallengeMethod,
+  header,
+  extraPayload,
 }) {
 
   issuer = issuer?.replace(/\/+$/, '');
@@ -91,7 +93,7 @@ const start = async function start({
 
   try {
     const { makeIdxState } = parsersForVersion(version);
-    const idxResponse = await introspect({ domain, interactionHandle, stateHandle, version })
+    const idxResponse = await introspect({ domain, interactionHandle, stateHandle, version, header, extraPayload })
       .catch( err => Promise.reject({
         error: 'introspect call failed',
         // Transform all errors into an IdX State object.
